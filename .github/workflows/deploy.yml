@@ -1,0 +1,46 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: "Version de l'image Docker à déployer"
+        required: true
+        type: string
+      runner_label:
+        description: "Label du runner self-hosted"
+        required: false
+        type: string
+        default: "iap-k3s"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version de l'image Docker à déployer"
+        required: true
+        type: string
+      runner_label:
+        description: "Label du runner self-hosted"
+        required: false
+        type: string
+        default: "iap-k3s"
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/arc-consolidator
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, arc-consolidator, "${{ inputs.runner_label }}"]
+    steps:
+      - name: Log in to GitHub Container Registry
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Pull image
+        run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}
+
+      - name: Set image in k3s deployment
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+        run: |
+          kubectl set image deployment/arc-consolidator \
+            arc-consolidator=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}

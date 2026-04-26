@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: arc-consolidator-config
+  namespace: default
+data:
+  KAFKA_SOURCE_BOOTSTRAP_SERVERS: "kafka.iap.local:30092"
+  KAFKA_TARGET_BOOTSTRAP_SERVERS: "kafka.iap.local:30092"
