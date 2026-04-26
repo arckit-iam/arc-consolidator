@@ -7,8 +7,8 @@ image:
   tag: latest
   pullPolicy: Always
 kafka:
-  sourceBootstrapServers: ""
-  targetBootstrapServers: ""
+  sourceBootstrapServers: "kafka.iap.local:30092"
+  targetBootstrapServers: "kafka.iap.local:30092"
 arc:
   topic: "arc"
 iam:
