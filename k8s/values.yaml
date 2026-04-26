@@ -5,6 +5,8 @@ image:
   repository: ghcr.io/arckit-iam/arc-consolidator
   tag: latest
   pullPolicy: Always
+  pullSecrets:
+    - name: ghcr
 kafka:
   sourceBootstrapServers: ""
   targetBootstrapServers: ""
