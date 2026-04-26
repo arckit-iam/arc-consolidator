@@ -32,9 +32,12 @@ jobs:
   deploy:
     runs-on: [self-hosted, arc-consolidator]
     steps:
+      - name: Write kubeconfig to file
+        run: echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
+
       - name: Deploy with Helm (init ou update)
         env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+          KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
         run: |
           helm upgrade --install arc-consolidator ./k8s \
             -f ./k8s/values.yaml \
@@ -48,7 +51,7 @@ jobs:
 
       - name: Set image in k3s deployment
         env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+          KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
         run: |
           kubectl set image deployment/arc-consolidator \
             arc-consolidator=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}
