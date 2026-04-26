@@ -6,7 +6,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1m0s
-  url: https://github.com/etien/arc-consolidator
+  url: https://github.com/arckit-iam/arc-consolidator
   ref:
     branch: main
   secretRef:
