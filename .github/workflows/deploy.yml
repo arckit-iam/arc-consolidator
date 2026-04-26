@@ -12,6 +12,11 @@ on:
         required: false
         type: string
         default: "iap-k3s"
+      env_name:
+        description: "Nom de l'environnement GitHub"
+        required: false
+        type: string
+        default: "prod"
   workflow_dispatch:
     inputs:
       version:
@@ -23,6 +28,11 @@ on:
         required: false
         type: string
         default: "iap-k3s"
+      env_name:
+        description: "Nom de l'environnement GitHub"
+        required: false
+        type: string
+        default: "prod"
 
 env:
   REGISTRY: ghcr.io
@@ -30,6 +40,7 @@ env:
 
 jobs:
   deploy:
+    environment: ${{ inputs.env_name }}
     runs-on: [self-hosted, arc-consolidator]
     steps:
       - name: Write kubeconfig to file
