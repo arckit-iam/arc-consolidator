@@ -46,6 +46,10 @@ jobs:
       - name: Write kubeconfig to file
         run: echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
 
+
+      - name: Log in to GitHub Container Registry
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
       - name: Extract Helm chart from image
         run: |
           docker create --name temp_chart ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}
