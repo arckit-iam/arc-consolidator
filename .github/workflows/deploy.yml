@@ -32,6 +32,14 @@ jobs:
   deploy:
     runs-on: [self-hosted, arc-consolidator]
     steps:
+      - name: Deploy with Helm (init ou update)
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+        run: |
+          helm upgrade --install arc-consolidator ./k8s \
+            -f ./k8s/values.yaml \
+            --namespace default --create-namespace
+
       - name: Log in to GitHub Container Registry
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
