@@ -50,3 +50,14 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Lint all YAML manifests (k8s/)
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          file_or_dir: k8s/
+
+      - name: Upload k8s manifests as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: k8s-manifests
+          path: k8s/

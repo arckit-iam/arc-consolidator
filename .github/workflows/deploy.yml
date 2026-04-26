@@ -46,33 +46,8 @@ jobs:
       - name: Write kubeconfig to file
         run: echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
 
-
-      - name: Log in to GitHub Container Registry
-        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Extract Helm chart from image
-        run: |
-          docker create --name temp_chart ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}
-          docker cp temp_chart:/app/chart ./chart
-          docker rm temp_chart
-
-      - name: Deploy with Helm (init ou update)
+      - name: Apply all FluxCD manifests (k8s/flux)
         env:
           KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
         run: |
-          helm upgrade --install arc-consolidator ./chart \
-            -f ./chart/values.yaml \
-            --namespace default --create-namespace
-
-      - name: Log in to GitHub Container Registry
-        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Pull image
-        run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}
-
-      - name: Set image in k3s deployment
-        env:
-          KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
-        run: |
-          kubectl set image deployment/arc-consolidator \
-            arc-consolidator=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}
+          kubectl apply -f k8s/flux/
