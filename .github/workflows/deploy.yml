@@ -43,6 +43,9 @@ jobs:
     environment: ${{ inputs.env_name }}
     runs-on: [self-hosted, arc-consolidator]
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Write kubeconfig to file
         run: echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
 
