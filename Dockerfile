@@ -13,7 +13,7 @@ RUN apt-get update -qq && apt-get install -y -qq maven \
 FROM eclipse-temurin:25-jre-noble
 
 # Utilisateur non-root
-RUN useradd -r -u 1000 -g root appuser
+RUN useradd -r appuser
 USER appuser
 
 WORKDIR /app
