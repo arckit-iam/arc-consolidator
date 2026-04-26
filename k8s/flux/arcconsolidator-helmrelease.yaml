@@ -8,11 +8,12 @@ spec:
   interval: 5m
   chart:
     spec:
-      chart: ../chart
+      chart: .
       sourceRef:
         kind: GitRepository
         name: arcconsolidator
         namespace: flux-system
+      path: k8s
   values:
     image:
       repository: ghcr.io/arckit-iam/arc-consolidator
