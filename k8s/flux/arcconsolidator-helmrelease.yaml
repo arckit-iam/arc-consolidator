@@ -20,3 +20,6 @@ spec:
       pullPolicy: IfNotPresent
     imagePullSecrets:
       - name: ghcr
+    kafka:
+      sourceBootstrapServers: "kafka.iap.local:30092"
+      targetBootstrapServers: "kafka.iap.local:30092"
