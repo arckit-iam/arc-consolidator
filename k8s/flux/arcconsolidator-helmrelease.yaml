@@ -16,7 +16,7 @@ spec:
   values:
     image:
       repository: ghcr.io/arckit-iam/arc-consolidator
-      tag: "latest"  # à mettre à jour dans Git pour déployer une nouvelle version
+      tag: "latest"
       pullPolicy: IfNotPresent
     imagePullSecrets:
       - name: ghcr

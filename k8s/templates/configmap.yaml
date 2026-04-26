@@ -5,7 +5,7 @@ metadata:
   name: arc-consolidator-config
   namespace: {{ .Release.Namespace }}
 data:
-  KAFKA_SOURCE_BOOTSTRAP_SERVERS: "{{ .Values.kafka.sourceBootstrapServers }}"
-  KAFKA_TARGET_BOOTSTRAP_SERVERS: "{{ .Values.kafka.targetBootstrapServers }}"
-  ARC_TOPIC: "{{ .Values.arc.topic }}"
-  IAM_TOPICS_ACTIVEDIRECTORY: "{{ .Values.iam.topics.activedirectory }}"
+  KAFKA_SOURCE_BOOTSTRAP_SERVERS: "{{.Values.kafka.sourceBootstrapServers}}"
+  KAFKA_TARGET_BOOTSTRAP_SERVERS: "{{.Values.kafka.targetBootstrapServers}}"
+  ARC_TOPIC: "{{.Values.arc.topic}}"
+  IAM_TOPICS_ACTIVEDIRECTORY: "{{.Values.iam.topics.activedirectory}}"
