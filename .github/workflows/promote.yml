@@ -54,7 +54,10 @@ jobs:
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}-dev
           docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}-dev \
                      ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}-rc
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}-dev \
+                     ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:rc
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}-rc
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:rc
 
 
       - name: Promote Docker rc → stable + latest
@@ -64,8 +67,11 @@ jobs:
           docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}-rc \
                      ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}
           docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}-rc \
+                     ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:stable
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}-rc \
                      ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:stable
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
   deploy:
