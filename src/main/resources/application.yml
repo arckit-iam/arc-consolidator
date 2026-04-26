@@ -1,13 +1,12 @@
 spring:
   kafka:
+    bootstrap-servers: kafka.iap.local:30092
     consumer:
-      bootstrap-servers: kafka.iap.local:30092
       group-id: arc-consolidator
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
-      bootstrap-servers: kafka.iap.local:30092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
@@ -17,3 +16,6 @@ arc:
 iam:
   topics:
     activedirectory: iam.raw.activedirectory
+logging:
+  level:
+    root: DEBUG
