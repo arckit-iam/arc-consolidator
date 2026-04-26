@@ -13,6 +13,8 @@ spec:
       labels:
         app: arc-consolidator
     spec:
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
       containers:
         - name: arc-consolidator
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
