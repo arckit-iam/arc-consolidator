@@ -1,19 +1,20 @@
+iam:
 spring:
   kafka:
     consumer:
-      bootstrap-servers: kafka.iap.local:30092
+      bootstrap-servers: ${SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS:localhost:9092}
       group-id: arc-consolidator
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
-      bootstrap-servers: kafka.iap.local:30092
+      bootstrap-servers: ${SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS:localhost:9092}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 arc:
-  topic: arc
+  topic: ${ARC_TOPIC:arc}
 
 iam:
   topics:
-    activedirectory: iam.raw.activedirectory
+    activedirectory: ${IAM_TOPICS_ACTIVEDIRECTORY:iam.raw.activedirectory}

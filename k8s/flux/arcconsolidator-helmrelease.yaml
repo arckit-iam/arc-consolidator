@@ -22,5 +22,5 @@ spec:
     imagePullSecrets:
       - name: ghcr
     kafka:
-      sourceBootstrapServers: "kafka.iap.local:30092"
-      targetBootstrapServers: "kafka.iap.local:30092"
+      sourceBootstrapServers: "redpanda-external.arckit.svc.cluster.local:9092"
+      targetBootstrapServers: "redpanda-external.arckit.svc.cluster.local:9092"
