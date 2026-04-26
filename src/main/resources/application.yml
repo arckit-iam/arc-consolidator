@@ -1,13 +1,13 @@
 spring:
   kafka:
     consumer:
-      bootstrap-servers: ${KAFKA_SOURCE_BOOTSTRAP_SERVERS:localhost:9092}
+      bootstrap-servers: kafka.iap.local:30092
       group-id: arc-consolidator
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
-      bootstrap-servers: ${KAFKA_TARGET_BOOTSTRAP_SERVERS:localhost:9092}
+      bootstrap-servers: kafka.iap.local:30092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
