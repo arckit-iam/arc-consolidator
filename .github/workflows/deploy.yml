@@ -46,12 +46,18 @@ jobs:
       - name: Write kubeconfig to file
         run: echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
 
+      - name: Extract Helm chart from image
+        run: |
+          docker create --name temp_chart ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}
+          docker cp temp_chart:/app/chart ./chart
+          docker rm temp_chart
+
       - name: Deploy with Helm (init ou update)
         env:
           KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
         run: |
-          helm upgrade --install arc-consolidator ./k8s \
-            -f ./k8s/values.yaml \
+          helm upgrade --install arc-consolidator ./chart \
+            -f ./chart/values.yaml \
             --namespace default --create-namespace
 
       - name: Log in to GitHub Container Registry
