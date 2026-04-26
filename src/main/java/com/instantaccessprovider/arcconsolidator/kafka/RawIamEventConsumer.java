@@ -1,28 +1,34 @@
 package com.instantaccessprovider.arcconsolidator.kafka;
 
-import com.instantaccessprovider.arcconsolidator.mapper.ArcEventMapper;
-import com.instantaccessprovider.arcconsolidator.model.ArcEvent;
+import com.instantaccessprovider.arcconsolidator.application.service.ArcConsolidatorService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+/**
+ * Adapter Kafka : consomme les événements bruts Active Directory depuis iam.raw.activedirectory
+ * et délègue la consolidation au service applicatif.
+ */
 @Component
 public class RawIamEventConsumer {
-    private final ArcEventMapper mapper;
-    private final ArcEventPublisher publisher;
 
-    public RawIamEventConsumer(ArcEventMapper mapper, ArcEventPublisher publisher) {
-        this.mapper = mapper;
-        this.publisher = publisher;
+    private static final Logger log = LoggerFactory.getLogger(RawIamEventConsumer.class);
+
+    private final ArcConsolidatorService service;
+
+    public RawIamEventConsumer(ArcConsolidatorService service) {
+        this.service = service;
     }
 
-    @KafkaListener(topics = "iam.raw.activedirectory", groupId = "arc-consolidator")
+    @KafkaListener(
+            topics = "${iam.topics.activedirectory:iam.raw.activedirectory}",
+            groupId = "${spring.kafka.consumer.group-id:arc-consolidator}"
+    )
     public void onMessage(ConsumerRecord<String, String> record) {
-        try {
-            ArcEvent arcEvent = mapper.fromRaw(record.value());
-            publisher.publish(arcEvent);
-        } catch (Exception e) {
-            // TODO: log/handle error
-        }
+        log.debug("Received raw AD event: topic={}, partition={}, offset={}",
+                record.topic(), record.partition(), record.offset());
+        service.consolidate("activedirectory", record.value());
     }
 }
