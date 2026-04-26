@@ -13,6 +13,8 @@ spec:
       labels:
         app: arc-consolidator
     spec:
+      imagePullSecrets:
+        - name: ghcr
       containers:
         - name: arc-consolidator
           image: ghcr.io/arckit-iam/arc-consolidator:latest
