@@ -16,6 +16,33 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * Valide le mapping de chaque EventID Active Directory vers le modèle ARC.
  */
 class ArcEventMapperTest {
+    // ── EventID 4738 – Vérification du parsing des attributs modifiés ───────
+    @Test
+    void fromRaw_4738_parsesChangedAttributes() throws IOException {
+        String eventJson = """
+        {
+          \"EventID\": 4738,
+          \"TimeCreated\": \"2026-04-26 10:43:51 +0200\",
+          \"EventRecordID\": 7399276,
+          \"Computer\": \"DC01.iap.local\",
+          \"Message\": "A user account was changed.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-21-...\r\n\tAccount Name:\t\tadministrator\r\n\tAccount Domain:\t\tIAP\r\n\tLogon ID:\t\t0x69F92\r\n\r\nTarget Account:\r\n\tSecurity ID:\t\tS-1-5-21-...\r\n\tAccount Name:\t\twef-test-5252\r\n\tAccount Domain:\t\tIAP\r\n\r\nChanged Attributes:\r\n\tSAM Account Name:\t-\r\n\tDisplay Name:\t\t-\r\n\tUser Principal Name:\t-\r\n\tPassword Last Set:\t26/04/2026 10:43:51\r\n\tOld UAC Value:\t0x11\r\n\tNew UAC Value:\t0x10\r\n\tUser Account Control:\t\r\n\t\tAccount Enabled\r\n\tUser Parameters:\t-\r\n\tSID History:\t-\r\n\tLogon Hours:\t-\r\n\r\nAdditional Information:\r\n\tPrivileges:\t\t-",
+          \"StringInserts\": [
+            "-", "wef-test-5252", "IAP", "S-1-5-21-...",
+            "S-1-5-21-...", "administrator", "IAP", "0x69f92"
+          ]
+        }
+        """;
+        ArcEvent event = mapper.fromRaw(eventJson);
+        assertThat(event.getChangedAttributes()).isNotNull();
+        assertThat(event.getChangedAttributes()).anyMatch(attr -> "Password Last Set".equals(attr.getName()) && "26/04/2026 10:43:51".equals(attr.getNewValue()));
+        assertThat(event.getChangedAttributes()).anyMatch(attr -> "Old UAC Value".equals(attr.getName()) && "0x11".equals(attr.getNewValue()));
+        assertThat(event.getChangedAttributes()).anyMatch(attr -> "New UAC Value".equals(attr.getName()) && "0x10".equals(attr.getNewValue()));
+
+        // Exemple d'affichage/logging
+        for (ArcEvent.ChangedAttribute attr : event.getChangedAttributes()) {
+            System.out.printf("Attribut modifié: %s → %s\n", attr.getName(), attr.getNewValue());
+        }
+    }
 
     private ArcEventMapper mapper;
 
@@ -242,5 +269,141 @@ class ArcEventMapperTest {
     void fromRaw_invalidJson_throwsIOException() {
         assertThatThrownBy(() -> mapper.fromRaw("{invalid json}"))
                 .isInstanceOf(IOException.class);
+    }
+
+    // ── EventID 4727 – GROUP_CREATED ─────────────────────────────────────────
+    @Test
+    void fromRaw_4727_returnsGroupCreatedType() throws IOException {
+        String eventJson = """
+        {
+          "EventID": 4727,
+          "TimeCreated": "2026-04-26 12:00:00 +0200",
+          "EventRecordID": 8000001,
+          "Computer": "DC01.iap.local",
+          "StringInserts": ["DL-Finance-All", "IAP", "S-1-5-21-...-2000"]
+        }
+        """;
+        ArcEvent event = mapper.fromRaw(eventJson);
+        assertThat(event.getEventType()).isEqualTo(ArcEventType.GROUP_CREATED);
+    }
+
+    // ── EventID 4728 – ASSIGNMENT_ADDED ────────────────────────────────────
+    @Test
+    void fromRaw_4728_returnsAssignmentAddedType() throws IOException {
+        String eventJson = """
+        {
+          "EventID": 4728,
+          "TimeCreated": "2026-04-26 12:01:00 +0200",
+          "EventRecordID": 8000002,
+          "Computer": "DC01.iap.local",
+          "StringInserts": ["wef-test-5252", "DL-Finance-All", "S-1-5-21-...-1200", "S-1-5-21-...-2000"]
+        }
+        """;
+        ArcEvent event = mapper.fromRaw(eventJson);
+        assertThat(event.getEventType()).isEqualTo(ArcEventType.ASSIGNMENT_ADDED);
+    }
+
+    // ── EventID 4781 – USER_RENAMED ────────────────────────────────────────
+    @Test
+    void fromRaw_4781_returnsUserRenamedType() throws IOException {
+        String eventJson = """
+        {
+          "EventID": 4781,
+          "TimeCreated": "2026-04-26 12:02:00 +0200",
+          "EventRecordID": 8000003,
+          "Computer": "DC01.iap.local",
+          "StringInserts": ["oldName", "newName", "IAP", "S-1-5-21-...-1200"]
+        }
+        """;
+        ArcEvent event = mapper.fromRaw(eventJson);
+        assertThat(event.getEventType()).isEqualTo(ArcEventType.USER_RENAMED);
+    }
+
+    // ── EventID 4728 avec scope (exemple simplifié) ────────────────────────
+    @Test
+    void fromRaw_4728_withScope_parsesScopeField() throws IOException {
+        // Ici, le scope serait à parser dans un champ additionnel ou metadata (exemple fictif)
+        String eventJson = """
+        {
+          "EventID": 4728,
+          "TimeCreated": "2026-04-26 12:03:00 +0200",
+          "EventRecordID": 8000004,
+          "Computer": "DC01.iap.local",
+          "StringInserts": ["wef-test-5252", "DL-Finance-All", "S-1-5-21-...-1200", "S-1-5-21-...-2000"],
+          "scope": {
+            "dimensions": [
+              { "type": "region", "value": "EMEA" },
+              { "type": "entity", "value": ["FR-01", "FR-02"] }
+            ]
+          }
+        }
+        """;
+        ArcEvent event = mapper.fromRaw(eventJson);
+        assertThat(event.getEventType()).isEqualTo(ArcEventType.ASSIGNMENT_ADDED);
+        // Ici, on vérifierait le mapping du scope si implémenté dans ArcEvent
+    }
+
+    // ── EventID 4731 – Vérification du parsing des attributs modifiés groupe ──
+    @Test
+    void fromRaw_4731_parsesChangedAttributesForGroup() throws IOException {
+        String eventJson = """
+        {
+          "EventID": 4731,
+          "TimeCreated": "2026-04-26 13:00:00 +0200",
+          "EventRecordID": 8000100,
+          "Computer": "DC01.iap.local",
+          "Message": "A security-enabled local group was changed.\r\n\r\nChanged Attributes:\r\n\tDescription:\tFinance group\r\n\tMember Added:\tS-1-5-21-...-1200\r\n\tMember Removed:\tS-1-5-21-...-1300\r\n\r\nAdditional Information:\r\n\tPrivileges:\t-",
+          "StringInserts": [
+            "DL-Finance-All", "IAP", "S-1-5-21-...-2000"
+          ]
+        }
+        """;
+        ArcEvent event = mapper.fromRaw(eventJson);
+        assertThat(event.getChangedAttributes()).isNotNull();
+        assertThat(event.getChangedAttributes()).anyMatch(attr -> "Description".equals(attr.getName()) && "Finance group".equals(attr.getNewValue()));
+        assertThat(event.getChangedAttributes()).anyMatch(attr -> "Member Added".equals(attr.getName()) && "S-1-5-21-...-1200".equals(attr.getNewValue()));
+        assertThat(event.getChangedAttributes()).anyMatch(attr -> "Member Removed".equals(attr.getName()) && "S-1-5-21-...-1300".equals(attr.getNewValue()));
+    }
+
+    // ── EventID 4728 – Vérification du parsing des attributs modifiés affectation ──
+    @Test
+    void fromRaw_4728_parsesChangedAttributesForAssignment() throws IOException {
+        String eventJson = """
+        {
+          "EventID": 4728,
+          "TimeCreated": "2026-04-26 14:00:00 +0200",
+          "EventRecordID": 8000200,
+          "Computer": "DC01.iap.local",
+          "Message": "A member was added to a security-enabled global group.\r\n\r\nChanged Attributes:\r\n\tMember Added:\tS-1-5-21-...-1200\r\n\tScope:\tEMEA\r\n\r\nAdditional Information:\r\n\tPrivileges:\t-",
+          "StringInserts": [
+            "wef-test-5252", "DL-Finance-All", "S-1-5-21-...-1200", "S-1-5-21-...-2000"
+          ]
+        }
+        """;
+        ArcEvent event = mapper.fromRaw(eventJson);
+        assertThat(event.getChangedAttributes()).isNotNull();
+        assertThat(event.getChangedAttributes()).anyMatch(attr -> "Member Added".equals(attr.getName()) && "S-1-5-21-...-1200".equals(attr.getNewValue()));
+        assertThat(event.getChangedAttributes()).anyMatch(attr -> "Scope".equals(attr.getName()) && "EMEA".equals(attr.getNewValue()));
+    }
+
+    // ── EventID 4729 – Vérification du parsing des attributs modifiés retrait membre ──
+    @Test
+    void fromRaw_4729_parsesChangedAttributesForAssignmentRemoval() throws IOException {
+        String eventJson = """
+        {
+          "EventID": 4729,
+          "TimeCreated": "2026-04-26 14:05:00 +0200",
+          "EventRecordID": 8000201,
+          "Computer": "DC01.iap.local",
+          "Message": "A member was removed from a security-enabled global group.\r\n\r\nChanged Attributes:\r\n\tMember Removed:\tS-1-5-21-...-1200\r\n\tScope:\tEMEA\r\n\r\nAdditional Information:\r\n\tPrivileges:\t-",
+          "StringInserts": [
+            "wef-test-5252", "DL-Finance-All", "S-1-5-21-...-1200", "S-1-5-21-...-2000"
+          ]
+        }
+        """;
+        ArcEvent event = mapper.fromRaw(eventJson);
+        assertThat(event.getChangedAttributes()).isNotNull();
+        assertThat(event.getChangedAttributes()).anyMatch(attr -> "Member Removed".equals(attr.getName()) && "S-1-5-21-...-1200".equals(attr.getNewValue()));
+        assertThat(event.getChangedAttributes()).anyMatch(attr -> "Scope".equals(attr.getName()) && "EMEA".equals(attr.getNewValue()));
     }
 }

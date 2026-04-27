@@ -6,6 +6,9 @@ import java.time.OffsetDateTime;
  * Modèle cible ARC pour les événements consolidés (source Active Directory).
  * Représente un événement de cycle de vie d'un compte utilisateur normalisé.
  */
+import java.util.List;
+import java.util.ArrayList;
+
 public class ArcEvent {
 
     private String id;
@@ -16,6 +19,31 @@ public class ArcEvent {
     private int sourceEventId;
     private Actor actor;
     private Target target;
+    /** Liste des attributs modifiés (pour les events de modification) */
+    private List<ChangedAttribute> changedAttributes;
+    /**
+     * Représente un attribut modifié lors d'un event de modification (ex: 4738).
+     */
+    public static class ChangedAttribute {
+        private String name;
+        private String oldValue;
+        private String newValue;
+
+        public ChangedAttribute() {}
+        public ChangedAttribute(String name, String oldValue, String newValue) {
+            this.name = name;
+            this.oldValue = oldValue;
+            this.newValue = newValue;
+        }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public String getOldValue() { return oldValue; }
+        public void setOldValue(String oldValue) { this.oldValue = oldValue; }
+        public String getNewValue() { return newValue; }
+        public void setNewValue(String newValue) { this.newValue = newValue; }
+    }
+    public List<ChangedAttribute> getChangedAttributes() { return changedAttributes; }
+    public void setChangedAttributes(List<ChangedAttribute> changedAttributes) { this.changedAttributes = changedAttributes; }
 
     /**
      * Compte ayant réalisé l'action (sujet de l'événement Windows).
