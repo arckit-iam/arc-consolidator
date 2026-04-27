@@ -61,47 +61,31 @@ public class ArcEventMapper {
             case 4738: // Modification utilisateur
                 event.setTarget(buildTarget(inserts, 1, 2, 3));
                 event.setActor(buildActor(inserts, 4, 5, 6, 7));
-                // Extraction des attributs modifiés depuis le champ Message
                 event.setChangedAttributes(parseChangedAttributes(node.path("Message").asText("")));
                 break;
             case 4731: // Modification groupe
-                // Extraction des attributs modifiés depuis le champ Message (même logique)
                 event.setChangedAttributes(parseChangedAttributes(node.path("Message").asText("")));
                 break;
-            // Affectation : Ajout/Suppression membre (assignment) — on logge les changements si présents
             case 4728: // Ajout membre groupe
             case 4732: // Ajout membre groupe local
             case 4756: // Ajout membre groupe universel
+                event.setChangedAttributes(parseChangedAttributes(node.path("Message").asText("")));
+                break;
             case 4729: // Suppression membre groupe
             case 4733: // Suppression membre groupe local
             case 4757: // Suppression membre groupe universel
-                // Extraction des changements éventuels (ex: scope, droits, etc.)
                 event.setChangedAttributes(parseChangedAttributes(node.path("Message").asText("")));
                 break;
             case 4781: // Renommage utilisateur
                 // TODO: mapping spécifique pour le renommage
                 break;
-
-            // ENTITLEMENT EVENTS (groupes)
             case 4727: // Création groupe
-            case 4731: // Modification groupe
             case 4754: // Création groupe universel
             case 4730: // Suppression groupe
             case 4734: // Suppression groupe local
             case 4758: // Suppression groupe universel
                 // TODO: mapping Entitlement (groupe)
                 break;
-
-            // ASSIGNMENT EVENTS (affectation)
-            case 4728: // Ajout membre groupe
-            case 4732: // Ajout membre groupe local
-            case 4756: // Ajout membre groupe universel
-            case 4729: // Suppression membre groupe
-            case 4733: // Suppression membre groupe local
-            case 4757: // Suppression membre groupe universel
-                // TODO: mapping Assignment (affectation, scope optionnel)
-                break;
-
             default:
                 if (inserts.size() >= 3) {
                     event.setTarget(buildTarget(inserts, 0, 1, 2));

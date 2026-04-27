@@ -1,4 +1,3 @@
-iam:
 spring:
   kafka:
     consumer:
