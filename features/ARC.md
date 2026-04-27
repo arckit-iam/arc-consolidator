@@ -1,3 +1,87 @@
+# 8. Exemples d'événements métier (schémas recommandés)
+
+## 8.1 Identity (user)
+```json
+{
+  "operation": "created",
+  "identity": {
+    "id": "f47ac10b-...",
+    "externalId": "S-1-5-21-...",
+    "displayName": "wef-test-0554",
+    "type": "user",
+    "sourceSystem": "ad://corp.example.com",
+    "metadata": { }
+  }
+}
+```
+Pour une modification :
+```json
+{
+  "operation": "updated",
+  "identity": {
+    "id": "f47ac10b-...",
+    "displayName": "wef-test-0554"
+  },
+  "changes": [
+    { "field": "department", "old": "IT", "new": "Finance" },
+    { "field": "email", "old": "john@corp.com", "new": "john.doe@corp.com" }
+  ]
+}
+```
+
+## 8.2 Entitlement (group)
+```json
+{
+  "operation": "created",
+  "entitlement": {
+    "id": "e7d3a021-...",
+    "externalId": "S-1-5-21-...-512",
+    "name": "Domain Admins",
+    "type": "security-group",
+    "sourceSystem": "ad://corp.example.com",
+    "metadata": { }
+  }
+}
+```
+Pour une modification :
+```json
+{
+  "operation": "updated",
+  "entitlement": {
+    "id": "e7d3a021-...",
+    "name": "Domain Admins"
+  },
+  "changes": [
+    { "field": "owner", "old": "IT", "new": "Security" }
+  ]
+}
+```
+
+## 8.3 Assignment (ajout ou retrait)
+```json
+{
+  "operation": "added",
+  "assignment": {
+    "id": "a1b2c3d4-...",
+    "identityId": "f47ac10b-...",
+    "identityDisplayName": "wef-test-0554",
+    "entitlementId": "e7d3a021-...",
+    "entitlementName": "Domain Admins",
+    "grantedAt": "2026-04-02T14:32:11.123Z",
+    "sourceSystem": "ad://corp.example.com"
+  }
+}
+```
+Pour un retrait :
+```json
+{
+  "operation": "removed",
+  "assignment": {
+    "identityDisplayName": "wef-test-0554",
+    "entitlementName": "Domain Admins"
+  }
+}
+```
 # 00 — Modèle Abstrait IAM (Generic Identity & Access Model) InstantAccessProvider
 
 ## 1. Motivation
