@@ -9,5 +9,7 @@ data:
   IAM_TOPICS_ACTIVEDIRECTORY: "{{ .Values.iam.topics.activedirectory }}"
   KAFKA_SOURCE_BOOTSTRAP_SERVERS: "{{ .Values.kafka.sourceBootstrapServers }}"
   KAFKA_TARGET_BOOTSTRAP_SERVERS: "{{ .Values.kafka.targetBootstrapServers }}"
-  SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS: "{{ .Values.kafka.sourceBootstrapServers }}"
-  SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS: "{{ .Values.kafka.targetBootstrapServers }}"
+  SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS: >
+    {{ .Values.kafka.sourceBootstrapServers }}
+  SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS: >
+    {{ .Values.kafka.targetBootstrapServers }}

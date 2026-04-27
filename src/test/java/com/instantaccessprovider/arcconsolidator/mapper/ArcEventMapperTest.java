@@ -25,7 +25,7 @@ class ArcEventMapperTest {
           \"TimeCreated\": \"2026-04-26 10:43:51 +0200\",
           \"EventRecordID\": 7399276,
           \"Computer\": \"DC01.iap.local\",
-          \"Message\": "A user account was changed.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-21-...\r\n\tAccount Name:\t\tadministrator\r\n\tAccount Domain:\t\tIAP\r\n\tLogon ID:\t\t0x69F92\r\n\r\nTarget Account:\r\n\tSecurity ID:\t\tS-1-5-21-...\r\n\tAccount Name:\t\twef-test-5252\r\n\tAccount Domain:\t\tIAP\r\n\r\nChanged Attributes:\r\n\tSAM Account Name:\t-\r\n\tDisplay Name:\t\t-\r\n\tUser Principal Name:\t-\r\n\tPassword Last Set:\t26/04/2026 10:43:51\r\n\tOld UAC Value:\t0x11\r\n\tNew UAC Value:\t0x10\r\n\tUser Account Control:\t\r\n\t\tAccount Enabled\r\n\tUser Parameters:\t-\r\n\tSID History:\t-\r\n\tLogon Hours:\t-\r\n\r\nAdditional Information:\r\n\tPrivileges:\t\t-",
+          \"Message\": "A user account was changed.\\r\\n\\r\\nSubject:\\r\\n\\tSecurity ID:\\t\\tS-1-5-21-...\\r\\n\\tAccount Name:\\t\\tadministrator\\r\\n\\tAccount Domain:\\t\\tIAP\\r\\n\\tLogon ID:\\t\\t0x69F92\\r\\n\\r\\nTarget Account:\\r\\n\\tSecurity ID:\\t\\tS-1-5-21-...\\r\\n\\tAccount Name:\\t\\twef-test-5252\\r\\n\\tAccount Domain:\\t\\tIAP\\r\\n\\r\\nChanged Attributes:\\r\\n\\tSAM Account Name:\\t-\\r\\n\\tDisplay Name:\\t\\t-\\r\\n\\tUser Principal Name:\\t-\\r\\n\\tPassword Last Set:\\t26/04/2026 10:43:51\\r\\n\\tOld UAC Value:\\t0x11\\r\\n\\tNew UAC Value:\\t0x10\\r\\n\\tUser Account Control:\\t\\r\\n\\t\\tAccount Enabled\\r\\n\\tUser Parameters:\\t-\\r\\n\\tSID History:\\t-\\r\\n\\tLogon Hours:\\t-\\r\\n\\r\\nAdditional Information:\\r\\n\\tPrivileges:\\t\\t-",
           \"StringInserts\": [
             "-", "wef-test-5252", "IAP", "S-1-5-21-...",
             "S-1-5-21-...", "administrator", "IAP", "0x69f92"
@@ -352,7 +352,7 @@ class ArcEventMapperTest {
           "TimeCreated": "2026-04-26 13:00:00 +0200",
           "EventRecordID": 8000100,
           "Computer": "DC01.iap.local",
-          "Message": "A security-enabled local group was changed.\r\n\r\nChanged Attributes:\r\n\tDescription:\tFinance group\r\n\tMember Added:\tS-1-5-21-...-1200\r\n\tMember Removed:\tS-1-5-21-...-1300\r\n\r\nAdditional Information:\r\n\tPrivileges:\t-",
+          "Message": "A security-enabled local group was changed.\\r\\n\\r\\nChanged Attributes:\\r\\n\\tDescription:\\tFinance group\\r\\n\\tMember Added:\\tS-1-5-21-...-1200\\r\\n\\tMember Removed:\\tS-1-5-21-...-1300\\r\\n\\r\\nAdditional Information:\\r\\n\\tPrivileges:\\t-",
           "StringInserts": [
             "DL-Finance-All", "IAP", "S-1-5-21-...-2000"
           ]
@@ -374,7 +374,7 @@ class ArcEventMapperTest {
           "TimeCreated": "2026-04-26 14:00:00 +0200",
           "EventRecordID": 8000200,
           "Computer": "DC01.iap.local",
-          "Message": "A member was added to a security-enabled global group.\r\n\r\nChanged Attributes:\r\n\tMember Added:\tS-1-5-21-...-1200\r\n\tScope:\tEMEA\r\n\r\nAdditional Information:\r\n\tPrivileges:\t-",
+          "Message": "A member was added to a security-enabled global group.\\r\\n\\r\\nChanged Attributes:\\r\\n\\tMember Added:\\tS-1-5-21-...-1200\\r\\n\\tScope:\\tEMEA\\r\\n\\r\\nAdditional Information:\\r\\n\\tPrivileges:\\t-",
           "StringInserts": [
             "wef-test-5252", "DL-Finance-All", "S-1-5-21-...-1200", "S-1-5-21-...-2000"
           ]
@@ -395,7 +395,7 @@ class ArcEventMapperTest {
           "TimeCreated": "2026-04-26 14:05:00 +0200",
           "EventRecordID": 8000201,
           "Computer": "DC01.iap.local",
-          "Message": "A member was removed from a security-enabled global group.\r\n\r\nChanged Attributes:\r\n\tMember Removed:\tS-1-5-21-...-1200\r\n\tScope:\tEMEA\r\n\r\nAdditional Information:\r\n\tPrivileges:\t-",
+          "Message": "A member was removed from a security-enabled global group.\\r\\n\\r\\nChanged Attributes:\\r\\n\\tMember Removed:\\tS-1-5-21-...-1200\\r\\n\\tScope:\\tEMEA\\r\\n\\r\\nAdditional Information:\\r\\n\\tPrivileges:\\t-",
           "StringInserts": [
             "wef-test-5252", "DL-Finance-All", "S-1-5-21-...-1200", "S-1-5-21-...-2000"
           ]
