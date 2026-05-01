@@ -1,4 +1,4 @@
-package com.instantaccessprovider.arcconsolidator.kafka;
+package com.instantaccessprovider.arcconsolidator.kafka.consumer;
 
 import com.instantaccessprovider.arcconsolidator.application.service.ArcConsolidatorService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -9,16 +9,16 @@ import org.springframework.stereotype.Component;
 
 /**
  * Adapter Kafka : consomme les événements bruts Active Directory depuis iam.raw.activedirectory
- * et délègue la consolidation au service applicatif.
+ * et délègue la consolidation au service applicatif AD.
  */
 @Component
-public class RawIamEventConsumer {
+public class RawAdEventConsumer {
 
-    private static final Logger log = LoggerFactory.getLogger(RawIamEventConsumer.class);
+    private static final Logger log = LoggerFactory.getLogger(RawAdEventConsumer.class);
 
     private final ArcConsolidatorService service;
 
-    public RawIamEventConsumer(ArcConsolidatorService service) {
+    public RawAdEventConsumer(ArcConsolidatorService service) {
         this.service = service;
     }
 

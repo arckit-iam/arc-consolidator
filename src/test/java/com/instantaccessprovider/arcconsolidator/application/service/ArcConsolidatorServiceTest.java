@@ -1,33 +1,22 @@
 package com.instantaccessprovider.arcconsolidator.application.service;
 
+import com.instantaccessprovider.arcconsolidator.dto.IdentityEventDTO;
+import com.instantaccessprovider.arcconsolidator.dto.EntitlementEventDTO;
+import com.instantaccessprovider.arcconsolidator.dto.AssignmentEventDTO;
+import com.instantaccessprovider.arcconsolidator.mapper.ActiveDirectoryEventMapper;
 import com.instantaccessprovider.arcconsolidator.domain.port.ArcEventOutputPort;
-import com.instantaccessprovider.arcconsolidator.mapper.ArcEventMapper;
-import com.instantaccessprovider.arcconsolidator.model.ArcEvent;
-import com.instantaccessprovider.arcconsolidator.model.ArcEventType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.io.IOException;
-import java.time.OffsetDateTime;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
-/**
- * Tests unitaires du service applicatif ArcConsolidatorService.
- * Le mapper et le port de sortie sont mockés : seul le comportement orchestratoire est vérifié.
- */
 @ExtendWith(MockitoExtension.class)
 class ArcConsolidatorServiceTest {
 
-    @Mock
-    private ArcEventMapper mapper;
+    private ActiveDirectoryEventMapper adMapper;
 
     @Mock
     private ArcEventOutputPort outputPort;
@@ -36,88 +25,70 @@ class ArcConsolidatorServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new ArcConsolidatorService(mapper, outputPort);
-    }
-
-    // ── Cas nominal ───────────────────────────────────────────────────────────
-
-    @Test
-    void consolidate_callsMapperWithRawPayload() throws IOException {
-        ArcEvent event = buildEvent(ArcEventType.USER_CREATED, "alice", "IAP");
-        when(mapper.fromRaw(anyString())).thenReturn(event);
-
-        service.consolidate("activedirectory", "{\"EventID\":4720}");
-
-        verify(mapper).fromRaw("{\"EventID\":4720}");
+        adMapper = spy(new ActiveDirectoryEventMapper());
+        service = new ArcConsolidatorService(adMapper, outputPort);
     }
 
     @Test
-    void consolidate_publishesMappedEvent() throws IOException {
-        ArcEvent event = buildEvent(ArcEventType.USER_CREATED, "alice", "IAP");
-        when(mapper.fromRaw(anyString())).thenReturn(event);
-
-        service.consolidate("activedirectory", "{\"EventID\":4720}");
-
-        ArgumentCaptor<ArcEvent> captor = ArgumentCaptor.forClass(ArcEvent.class);
-        verify(outputPort).publish(captor.capture());
-        assertThat(captor.getValue()).isSameAs(event);
+    void consolidate_identityEvent_callsPublishIdentity() throws Exception {
+        IdentityEventDTO dto = new IdentityEventDTO();
+        doReturn(dto).when(adMapper).fromRawToIdentityEventDTO(anyString());
+        // EventID 4720 = identity event
+        String raw = "{\"EventID\":4720}";
+        service.consolidate("activedirectory", raw);
+        verify(adMapper).fromRawToIdentityEventDTO(raw);
+        verify(outputPort).publishIdentity(dto);
+        verifyNoMoreInteractions(outputPort);
     }
 
     @Test
-    void consolidate_publishesExactlyOnce() throws IOException {
-        when(mapper.fromRaw(anyString())).thenReturn(buildEvent(ArcEventType.USER_DELETED, "bob", "IAP"));
-
-        service.consolidate("activedirectory", "{}");
-
-        verify(outputPort, times(1)).publish(any(ArcEvent.class));
+    void consolidate_entitlementEvent_callsPublishEntitlement() throws Exception {
+        EntitlementEventDTO dto = new EntitlementEventDTO();
+        doReturn(dto).when(adMapper).fromRawToEntitlementEventDTO(anyString());
+        // EventID 4727 = entitlement event
+        String raw = "{\"EventID\":4727}";
+        service.consolidate("activedirectory", raw);
+        verify(adMapper).fromRawToEntitlementEventDTO(raw);
+        verify(outputPort).publishEntitlement(dto);
+        verifyNoMoreInteractions(outputPort);
     }
 
-    // ── Gestion des erreurs ───────────────────────────────────────────────────
+    @Test
+    void consolidate_assignmentEvent_callsPublishAssignment() throws Exception {
+        AssignmentEventDTO dto = new AssignmentEventDTO();
+        doReturn(dto).when(adMapper).fromRawToAssignmentEventDTO(anyString());
+        // EventID 4728 = assignment event
+        String raw = "{\"EventID\":4728}";
+        service.consolidate("activedirectory", raw);
+        verify(adMapper).fromRawToAssignmentEventDTO(raw);
+        verify(outputPort).publishAssignment(dto);
+        verifyNoMoreInteractions(outputPort);
+    }
 
     @Test
-    void consolidate_mapperThrowsIOException_doesNotPropagateAndSkipsPublish() throws IOException {
-        when(mapper.fromRaw(anyString())).thenThrow(new IOException("JSON invalide"));
-
-        assertThatCode(() -> service.consolidate("activedirectory", "bad json"))
-                .doesNotThrowAnyException();
-
+    void consolidate_unknownEventId_doesNothing() throws Exception {
+        // EventID 9999 = inconnu
+        String raw = "{\"EventID\":9999}";
+        service.consolidate("activedirectory", raw);
         verifyNoInteractions(outputPort);
     }
 
     @Test
-    void consolidate_outputPortThrowsException_doesNotPropagate() throws IOException {
-        ArcEvent event = buildEvent(ArcEventType.USER_ENABLED, "carol", "IAP");
-        when(mapper.fromRaw(anyString())).thenReturn(event);
-        doThrow(new RuntimeException("Kafka indisponible")).when(outputPort).publish(any());
-
-        assertThatCode(() -> service.consolidate("activedirectory", "{}"))
-                .doesNotThrowAnyException();
+    void consolidate_mapperThrowsException_doesNotPropagateAndSkipsPublish() throws Exception {
+        doThrow(new RuntimeException("JSON invalide")).when(adMapper).fromRawToIdentityEventDTO(anyString());
+        // EventID 4720 = identity event
+        String raw = "{\"EventID\":4720}";
+        assertThatCode(() -> service.consolidate("activedirectory", raw)).doesNotThrowAnyException();
+        verifyNoInteractions(outputPort);
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private ArcEvent buildEvent(ArcEventType type, String accountName, String domain) {
-        ArcEvent event = new ArcEvent();
-        event.setId("DC01_99999");
-        event.setTimestamp(OffsetDateTime.parse("2026-04-26T10:43:50+02:00"));
-        event.setEventType(type);
-        event.setSource("activedirectory");
-        event.setSourceComputer("DC01.iap.local");
-        event.setSourceEventId(4720);
-
-        ArcEvent.Target target = new ArcEvent.Target();
-        target.setAccountName(accountName);
-        target.setDomain(domain);
-        target.setSecurityId("S-1-5-21-000-1200");
-        event.setTarget(target);
-
-        ArcEvent.Actor actor = new ArcEvent.Actor();
-        actor.setAccountName("administrator");
-        actor.setDomain(domain);
-        actor.setSecurityId("S-1-5-21-000-500");
-        actor.setLogonId("0x1234");
-        event.setActor(actor);
-
-        return event;
+    @Test
+    void consolidate_outputPortThrowsException_doesNotPropagate() throws Exception {
+        IdentityEventDTO dto = new IdentityEventDTO();
+        doReturn(dto).when(adMapper).fromRawToIdentityEventDTO(anyString());
+        doThrow(new RuntimeException("Kafka indisponible")).when(outputPort).publishIdentity(any());
+        String raw = "{\"EventID\":4720}";
+        assertThatCode(() -> service.consolidate("activedirectory", raw)).doesNotThrowAnyException();
     }
 }
+

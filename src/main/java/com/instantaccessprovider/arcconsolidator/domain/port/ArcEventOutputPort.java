@@ -1,11 +1,15 @@
 package com.instantaccessprovider.arcconsolidator.domain.port;
 
-import com.instantaccessprovider.arcconsolidator.model.ArcEvent;
+import com.instantaccessprovider.arcconsolidator.dto.IdentityEventDTO;
+import com.instantaccessprovider.arcconsolidator.dto.EntitlementEventDTO;
+import com.instantaccessprovider.arcconsolidator.dto.AssignmentEventDTO;
 
 /**
- * Port de sortie : publication d'un événement ARC normalisé.
+ * Port de sortie : publication d'un événement ARC normalisé (par type métier).
  * Implémenté par l'adapter Kafka dans l'infrastructure.
  */
 public interface ArcEventOutputPort {
-    void publish(ArcEvent event);
+    void publishIdentity(IdentityEventDTO event);
+    void publishEntitlement(EntitlementEventDTO event);
+    void publishAssignment(AssignmentEventDTO event);
 }
