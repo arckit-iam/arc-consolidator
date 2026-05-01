@@ -10,8 +10,9 @@ public class EntitlementEventDTO {
     private String source;
     private String sourceComputer;
     private int sourceEventId;
-    private String name; // nom du groupe
-    private String externalId; // SID du groupe
+    private String name;        // CN=... / DN du groupe
+    private String displayName;  // nom lisible (sAMAccountName)
+    private String externalId;   // SID du groupe
     private String type; // security-group
     private String sourceSystem;
     private List<ChangedAttribute> changedAttributes;
@@ -43,6 +44,8 @@ public class EntitlementEventDTO {
     public void setSourceEventId(int sourceEventId) { this.sourceEventId = sourceEventId; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+    public String getDisplayName() { return displayName; }
+    public void setDisplayName(String displayName) { this.displayName = displayName; }
     public String getExternalId() { return externalId; }
     public void setExternalId(String externalId) { this.externalId = externalId; }
     public String getType() { return type; }

@@ -10,8 +10,9 @@ public class IdentityEventDTO {
     private String source;
     private String sourceComputer;
     private int sourceEventId;
-    private String displayName;
-    private String externalId;
+    private String name;        // CN=... / DN
+    private String displayName; // nom lisible (sAMAccountName)
+    private String externalId;  // SID
     private String type;
     private String sourceSystem;
     private List<ChangedAttribute> changedAttributes;
@@ -41,6 +42,8 @@ public class IdentityEventDTO {
     public void setSourceComputer(String sourceComputer) { this.sourceComputer = sourceComputer; }
     public int getSourceEventId() { return sourceEventId; }
     public void setSourceEventId(int sourceEventId) { this.sourceEventId = sourceEventId; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
     public String getDisplayName() { return displayName; }
     public void setDisplayName(String displayName) { this.displayName = displayName; }
     public String getExternalId() { return externalId; }

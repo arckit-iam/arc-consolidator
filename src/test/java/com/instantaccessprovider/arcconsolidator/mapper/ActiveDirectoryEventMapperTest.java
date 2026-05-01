@@ -44,6 +44,7 @@ class ActiveDirectoryEventMapperTest {
         """;
         IdentityEventDTO dto = mapper.fromRawToIdentityEventDTO(eventJson);
         assertThat(dto).isNotNull();
+        assertThat(dto.getName()).isEqualTo("wef-test-5252");
         assertThat(dto.getDisplayName()).isEqualTo("wef-test-5252");
         assertThat(dto.getSource()).isEqualTo("activedirectory");
         assertThat(dto.getId()).isEqualTo("DC01.iap.local_7399275");
@@ -90,6 +91,7 @@ class ActiveDirectoryEventMapperTest {
         EntitlementEventDTO dto = mapper.fromRawToEntitlementEventDTO(eventJson);
         assertThat(dto).isNotNull();
         assertThat(dto.getName()).isEqualTo("DL-Finance-All");
+        assertThat(dto.getDisplayName()).isEqualTo("DL-Finance-All");
         assertThat(dto.getExternalId()).isEqualTo("S-1-5-21-...-2000");
         assertThat(dto.getType()).isEqualTo("security-group");
         assertThat(dto.getEventType()).isEqualTo("CREATED");
@@ -125,19 +127,21 @@ class ActiveDirectoryEventMapperTest {
           "TimeCreated": "2026-04-26 12:01:00 +0200",
           "EventRecordID": 8000002,
           "Computer": "DC01.iap.local",
-          "StringInserts": ["DL-Finance-All", "IAP", "S-1-5-21-...-1200", "S-1-5-21-...-2000", "wef-test-5252", "IAP", "0x12345"]
+          "StringInserts": ["CN=wef-test-5252,CN=Users,DC=iap,DC=local", "IAP", "DL-Finance-All", "IAP", "S-1-5-21-...-1200", "S-1-5-21-...-2000", "0x12345"]
         }
         """;
         AssignmentEventDTO dto = mapper.fromRawToAssignmentEventDTO(eventJson);
         assertThat(dto).isNotNull();
+        assertThat(dto.getIdentity()).isNotNull();
+        assertThat(dto.getIdentity().getName()).isEqualTo("CN=wef-test-5252,CN=Users,DC=iap,DC=local");
+        assertThat(dto.getIdentity().getDisplayName()).isEqualTo("wef-test-5252");
+        assertThat(dto.getIdentity().getExternalId()).isEqualTo("S-1-5-21-...-1200");
+        assertThat(dto.getIdentity().getType()).isEqualTo("user");
         assertThat(dto.getEntitlement()).isNotNull();
         assertThat(dto.getEntitlement().getName()).isEqualTo("DL-Finance-All");
-        assertThat(dto.getEntitlement().getExternalId()).isEqualTo("S-1-5-21-...-1200");
+        assertThat(dto.getEntitlement().getDisplayName()).isEqualTo("DL-Finance-All");
+        assertThat(dto.getEntitlement().getExternalId()).isEqualTo("S-1-5-21-...-2000");
         assertThat(dto.getEntitlement().getType()).isEqualTo("security-group");
-        assertThat(dto.getIdentity()).isNotNull();
-        assertThat(dto.getIdentity().getDisplayName()).isEqualTo("wef-test-5252");
-        assertThat(dto.getIdentity().getExternalId()).isEqualTo("0x12345");
-        assertThat(dto.getIdentity().getType()).isEqualTo("user");
     }
 
     // ── EventID 4728 – ASSIGNMENT_ADDED (Assignment) – ChangedAttributes ────
@@ -197,6 +201,7 @@ class ActiveDirectoryEventMapperTest {
         }
         """;
         IdentityEventDTO dto = mapper.fromRawToIdentityEventDTO(eventJson);
+        assertThat(dto.getName()).isNull();
         assertThat(dto.getDisplayName()).isNull();
         assertThat(dto.getType()).isEqualTo("user");
     }

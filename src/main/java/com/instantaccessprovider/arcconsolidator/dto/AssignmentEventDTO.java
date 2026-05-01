@@ -15,11 +15,14 @@ public class AssignmentEventDTO {
     private List<ChangedAttribute> changedAttributes;
 
     public static class Identity {
-        private String displayName;
-        private String externalId;
+        private String name;        // CN=... / DN
+        private String displayName; // nom lisible (sAMAccountName)
+        private String externalId;  // SID
         private String type;
         private String sourceSystem;
         // getters/setters
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
         public String getDisplayName() { return displayName; }
         public void setDisplayName(String displayName) { this.displayName = displayName; }
         public String getExternalId() { return externalId; }
@@ -30,13 +33,16 @@ public class AssignmentEventDTO {
         public void setSourceSystem(String sourceSystem) { this.sourceSystem = sourceSystem; }
     }
     public static class Entitlement {
-        private String name;
-        private String externalId;
+        private String name;        // CN=... / DN (ou sAMAccountName si DN absent)
+        private String displayName; // nom lisible (sAMAccountName)
+        private String externalId;  // SID
         private String type;
         private String sourceSystem;
         // getters/setters
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
+        public String getDisplayName() { return displayName; }
+        public void setDisplayName(String displayName) { this.displayName = displayName; }
         public String getExternalId() { return externalId; }
         public void setExternalId(String externalId) { this.externalId = externalId; }
         public String getType() { return type; }

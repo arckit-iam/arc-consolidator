@@ -48,8 +48,9 @@ public class ActiveDirectoryEventMapper {
         dto.setSource("activedirectory");
         dto.setSourceComputer(computer);
         dto.setSourceEventId(eventId);
-        dto.setName(safeGet(inserts, 0));
-        dto.setExternalId(safeGet(inserts, 2));
+        dto.setName(safeGet(inserts, 0));        // sAMAccountName (pas de DN disponible pour les events groupe)
+        dto.setDisplayName(safeGet(inserts, 0));  // idem
+        dto.setExternalId(safeGet(inserts, 2));   // SID
         dto.setType("security-group");
         dto.setSourceSystem("activedirectory");
         dto.setChangedAttributes(parseChangedAttributesDTOEntitlement(node.path("Message").asText("")));
@@ -72,8 +73,9 @@ public class ActiveDirectoryEventMapper {
         dto.setSource("activedirectory");
         dto.setSourceComputer(computer);
         dto.setSourceEventId(eventId);
-        dto.setDisplayName(safeGet(inserts, 0));
-        dto.setExternalId(safeGet(inserts, 2));
+        dto.setName(safeGet(inserts, 0));        // sAMAccountName (pas de DN disponible pour les events identité)
+        dto.setDisplayName(safeGet(inserts, 0));  // idem
+        dto.setExternalId(safeGet(inserts, 2));   // SID
         dto.setType("user");
         dto.setSourceSystem("activedirectory");
         dto.setChangedAttributes(parseChangedAttributesDTOIdentity(node.path("Message").asText("")));
@@ -97,18 +99,22 @@ public class ActiveDirectoryEventMapper {
         dto.setSourceComputer(computer);
         dto.setSourceEventId(eventId);
 
-        // Identity
+        // Identity : [0]=memberDN, [1]=memberDomain, [2]=groupSAMAccountName, [3]=groupDomain, [4]=memberSID, [5]=groupSID
+        String memberDn = safeGet(inserts, 0);
         AssignmentEventDTO.Identity identity = new AssignmentEventDTO.Identity();
-        identity.setDisplayName(safeGet(inserts, 4));
-        identity.setExternalId(safeGet(inserts, 6));
+        identity.setName(memberDn);                             // CN=... / DN du membre
+        identity.setDisplayName(extractCN(memberDn));           // nom lisible extrait du DN
+        identity.setExternalId(safeGet(inserts, 4));            // SID du membre
         identity.setType("user");
         identity.setSourceSystem("activedirectory");
         dto.setIdentity(identity);
 
         // Entitlement
+        String groupSamAccountName = safeGet(inserts, 2);
         AssignmentEventDTO.Entitlement entitlement = new AssignmentEventDTO.Entitlement();
-        entitlement.setName(safeGet(inserts, 0));
-        entitlement.setExternalId(safeGet(inserts, 2));
+        entitlement.setName(groupSamAccountName);               // sAMAccountName du groupe (pas de DN dispo)
+        entitlement.setDisplayName(groupSamAccountName);        // idem
+        entitlement.setExternalId(safeGet(inserts, 5));         // SID du groupe
         entitlement.setType("security-group");
         entitlement.setSourceSystem("activedirectory");
         dto.setEntitlement(entitlement);
@@ -242,5 +248,15 @@ public class ActiveDirectoryEventMapper {
             return "-".equals(val) ? null : val;
         }
         return null;
+    }
+
+    /** Extrait la première valeur CN d'un DN. Ex: "CN=wef-test-0113,CN=Users,DC=iap,DC=local" → "wef-test-0113" */
+    private String extractCN(String dn) {
+        if (dn == null) return null;
+        if (dn.toUpperCase().startsWith("CN=")) {
+            int comma = dn.indexOf(',');
+            return comma > 3 ? dn.substring(3, comma) : dn.substring(3);
+        }
+        return dn;
     }
 }
