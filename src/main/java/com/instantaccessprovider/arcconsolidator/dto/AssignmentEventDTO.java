@@ -12,6 +12,7 @@ public class AssignmentEventDTO {
     private int sourceEventId;
     private Identity identity;
     private Entitlement entitlement;
+    private Scope scope;
     private List<ChangedAttribute> changedAttributes;
 
     public static class Identity {
@@ -50,6 +51,24 @@ public class AssignmentEventDTO {
         public String getSourceSystem() { return sourceSystem; }
         public void setSourceSystem(String sourceSystem) { this.sourceSystem = sourceSystem; }
     }
+    public static class Scope {
+        /** Dimensions du scope (ex: géographique, organisationnel, applicatif...) */
+        private java.util.List<Dimension> dimensions;
+        public java.util.List<Dimension> getDimensions() { return dimensions; }
+        public void setDimensions(java.util.List<Dimension> dimensions) { this.dimensions = dimensions; }
+
+        public static class Dimension {
+            private String type;   // ex: "geography", "org-unit", "application"
+            private String value;  // ex: "EMEA", "FIN-DEPT"
+            private String label;  // libellé lisible
+            public String getType() { return type; }
+            public void setType(String type) { this.type = type; }
+            public String getValue() { return value; }
+            public void setValue(String value) { this.value = value; }
+            public String getLabel() { return label; }
+            public void setLabel(String label) { this.label = label; }
+        }
+    }
     public static class ChangedAttribute {
         private String name;
         private String oldValue;
@@ -79,6 +98,8 @@ public class AssignmentEventDTO {
     public void setIdentity(Identity identity) { this.identity = identity; }
     public Entitlement getEntitlement() { return entitlement; }
     public void setEntitlement(Entitlement entitlement) { this.entitlement = entitlement; }
+    public Scope getScope() { return scope; }
+    public void setScope(Scope scope) { this.scope = scope; }
     public List<ChangedAttribute> getChangedAttributes() { return changedAttributes; }
     public void setChangedAttributes(List<ChangedAttribute> changedAttributes) { this.changedAttributes = changedAttributes; }
 }
