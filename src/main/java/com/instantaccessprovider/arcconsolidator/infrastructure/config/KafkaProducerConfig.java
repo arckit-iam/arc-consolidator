@@ -22,21 +22,22 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
 
-    @Bean
-    public ProducerFactory<String, ArcEvent> arcEventProducerFactory(KafkaProperties kafkaProperties) {
+        // --- Bean générique pour injection dans ArcEventPublisher ---
+        @Bean
+        public ProducerFactory<String, Object> objectProducerFactory(KafkaProperties kafkaProperties) {
         Map<String, Object> props = kafkaProperties.buildProducerProperties(null);
         ObjectMapper mapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return new DefaultKafkaProducerFactory<>(
-                props,
-                new StringSerializer(),
-                new JsonSerializer<>(mapper));
-    }
+            props,
+            new StringSerializer(),
+            new JsonSerializer<>(mapper));
+        }
 
-    @Bean
-    public KafkaTemplate<String, ArcEvent> kafkaTemplate(
-            ProducerFactory<String, ArcEvent> arcEventProducerFactory) {
-        return new KafkaTemplate<>(arcEventProducerFactory);
-    }
+        @Bean
+        public KafkaTemplate<String, Object> kafkaObjectTemplate(
+            ProducerFactory<String, Object> objectProducerFactory) {
+        return new KafkaTemplate<>(objectProducerFactory);
+        }
 }
