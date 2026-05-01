@@ -69,7 +69,13 @@ public class ArcEventPublisher implements ArcEventOutputPort {
 
     @Override
     public void publishAssignment(AssignmentEventDTO event) {
-        String key = event.getIdentity() != null ? event.getIdentity().getExternalId() : null;
+        String identityName = event.getIdentity() != null
+                ? (event.getIdentity().getDisplayName() != null ? event.getIdentity().getDisplayName() : event.getIdentity().getName())
+                : null;
+        String entitlementName = event.getEntitlement() != null ? event.getEntitlement().getName() : null;
+        String key = (identityName != null && entitlementName != null)
+                ? identityName + "_" + entitlementName
+                : (identityName != null ? identityName : entitlementName);
         kafkaTemplate.send(assignmentTopic, key, event)
                 .whenComplete((result, ex) -> {
                     if (ex != null) {

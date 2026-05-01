@@ -69,6 +69,10 @@ class ActiveDirectoryEventMapperTest {
         }
         """;
         IdentityEventDTO dto = mapper.fromRawToIdentityEventDTO(eventJson);
+        // inserts[1]=sAMAccountName, inserts[3]=SID pour les events MODIFIED (4738)
+        assertThat(dto.getName()).isEqualTo("wef-test-5252");
+        assertThat(dto.getDisplayName()).isEqualTo("wef-test-5252");
+        assertThat(dto.getExternalId()).isEqualTo("S-1-5-21-...");
         List<IdentityEventDTO.ChangedAttribute> attrs = dto.getChangedAttributes();
         assertThat(attrs).isNotNull();
         assertThat(attrs).anyMatch(attr -> "Password Last Set".equals(attr.getName()) && "26/04/2026 10:43:51".equals(attr.getNewValue()));
@@ -184,7 +188,7 @@ class ActiveDirectoryEventMapperTest {
         assertThat(attrs).anyMatch(attr -> "Scope".equals(attr.getName()) && "EMEA".equals(attr.getNewValue()));
     }
 
-    // ── Valeurs "-" normalisées en null ────────────────────────────────────
+    // ── 4738 : name depuis inserts[1] ; valeurs "-" filtrées dans changedAttributes ─────
     @Test
     void fromRawToIdentityEventDTO_dashValuesNormalizedToNull() throws IOException {
         String eventJson = """
@@ -193,7 +197,7 @@ class ActiveDirectoryEventMapperTest {
           "TimeCreated": "2026-04-26 10:43:51 +0200",
           "EventRecordID": 7399276,
           "Computer": "DC01.iap.local",
-          "Message": "Changed Attributes: \\r\\n\\tDescription:\\tUser modified",
+          "Message": "Changed Attributes: \\r\\n\\tDescription:\\t-\\r\\n\\tOld UAC Value:\\t0x10",
           "StringInserts": [
             "-", "wef-test-5252", "IAP", "S-1-5-21-984562994-3965904818-3631805304-1200",
             "S-1-5-21-984562994-3965904818-3631805304-500", "administrator", "IAP", "0x69f92"
@@ -201,9 +205,14 @@ class ActiveDirectoryEventMapperTest {
         }
         """;
         IdentityEventDTO dto = mapper.fromRawToIdentityEventDTO(eventJson);
-        assertThat(dto.getName()).isNull();
-        assertThat(dto.getDisplayName()).isNull();
+        // 4738 : name/displayName viennent de inserts[1], pas inserts[0] ("-")
+        assertThat(dto.getName()).isEqualTo("wef-test-5252");
+        assertThat(dto.getDisplayName()).isEqualTo("wef-test-5252");
         assertThat(dto.getType()).isEqualTo("user");
+        // Les attributs avec valeur "-" sont filtrés
+        List<IdentityEventDTO.ChangedAttribute> attrs = dto.getChangedAttributes();
+        assertThat(attrs).noneMatch(attr -> "-".equals(attr.getNewValue()));
+        assertThat(attrs).anyMatch(attr -> "Old UAC Value".equals(attr.getName()) && "0x10".equals(attr.getNewValue()));
     }
 
     // ── Erreur de parsing ───────────────────────────────────────────────────

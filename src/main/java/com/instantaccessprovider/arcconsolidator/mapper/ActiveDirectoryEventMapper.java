@@ -73,9 +73,14 @@ public class ActiveDirectoryEventMapper {
         dto.setSource("activedirectory");
         dto.setSourceComputer(computer);
         dto.setSourceEventId(eventId);
-        dto.setName(safeGet(inserts, 0));        // sAMAccountName (pas de DN disponible pour les events identité)
-        dto.setDisplayName(safeGet(inserts, 0));  // idem
-        dto.setExternalId(safeGet(inserts, 2));   // SID
+        // Layout 4720/4722/4725/4726 : [0]=sAMAccountName, [1]=domain, [2]=SID, ...
+        // Layout 4738/4781           : [0]=oldSAMChange("-"), [1]=sAMAccountName, [2]=domain, [3]=SID, ...
+        boolean isModified = (eventId == 4738 || eventId == 4781);
+        String samAccountName = safeGet(inserts, isModified ? 1 : 0);
+        String sid            = safeGet(inserts, isModified ? 3 : 2);
+        dto.setName(samAccountName);
+        dto.setDisplayName(samAccountName);
+        dto.setExternalId(sid);
         dto.setType("user");
         dto.setSourceSystem("activedirectory");
         dto.setChangedAttributes(parseChangedAttributesDTOIdentity(node.path("Message").asText("")));
@@ -140,6 +145,7 @@ public class ActiveDirectoryEventMapper {
                 if (parts.length == 2) {
                     String name = parts[0].trim().replace("\t", "");
                     String value = parts[1].trim();
+                    if ("-".equals(value)) continue; // valeur inchangée, on ignore
                     IdentityEventDTO.ChangedAttribute attr = new IdentityEventDTO.ChangedAttribute();
                     attr.setName(name);
                     attr.setNewValue(value);
@@ -167,6 +173,7 @@ public class ActiveDirectoryEventMapper {
                 if (parts.length == 2) {
                     String name = parts[0].trim().replace("\t", "");
                     String value = parts[1].trim();
+                    if ("-".equals(value)) continue; // valeur inchangée, on ignore
                     EntitlementEventDTO.ChangedAttribute attr = new EntitlementEventDTO.ChangedAttribute();
                     attr.setName(name);
                     attr.setNewValue(value);
@@ -194,6 +201,7 @@ public class ActiveDirectoryEventMapper {
                 if (parts.length == 2) {
                     String name = parts[0].trim().replace("\t", "");
                     String value = parts[1].trim();
+                    if ("-".equals(value)) continue; // valeur inchangée, on ignore
                     AssignmentEventDTO.ChangedAttribute attr = new AssignmentEventDTO.ChangedAttribute();
                     attr.setName(name);
                     attr.setNewValue(value);
