@@ -11,8 +11,13 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
+
 arc:
-  topic: ${ARC_TOPIC:arc}
+  topic: ${ARC_TOPIC:arc} # topic legacy (tous types)
+  topics:
+    identity: ${ARC_TOPIC_IDENTITY:arc.identity}
+    entitlement: ${ARC_TOPIC_ENTITLEMENT:arc.entitlement}
+    assignment: ${ARC_TOPIC_ASSIGNMENT:arc.assignment}
 
 iam:
   topics:

@@ -69,11 +69,35 @@ public class ArcEventMapper {
             case 4728: // Ajout membre groupe
             case 4732: // Ajout membre groupe local
             case 4756: // Ajout membre groupe universel
-                event.setChangedAttributes(parseChangedAttributes(node.path("Message").asText("")));
-                break;
             case 4729: // Suppression membre groupe
             case 4733: // Suppression membre groupe local
             case 4757: // Suppression membre groupe universel
+                // Pour les events d'assignation, on expose identity et entitlement
+                // Convention AD :
+                // - inserts[0] = nom du groupe (entitlement)
+                // - inserts[1] = domaine du groupe
+                // - inserts[2] = SID du groupe
+                // - inserts[3] = SID user (identity)
+                // - inserts[4] = nom user
+                // - inserts[5] = domaine user
+                // - inserts[6] = logonId
+
+                // Entitlement (groupe)
+                ArcEvent.Entitlement entitlement = new ArcEvent.Entitlement();
+                entitlement.setName(safeGet(inserts, 0));
+                entitlement.setSourceSystem("activedirectory");
+                entitlement.setExternalId(safeGet(inserts, 2));
+                entitlement.setType("security-group");
+                event.setEntitlement(entitlement);
+
+                // Identity (user)
+                ArcEvent.Identity identity = new ArcEvent.Identity();
+                identity.setDisplayName(safeGet(inserts, 4));
+                identity.setSourceSystem("activedirectory");
+                identity.setExternalId(safeGet(inserts, 3));
+                identity.setType("user");
+                event.setIdentity(identity);
+
                 event.setChangedAttributes(parseChangedAttributes(node.path("Message").asText("")));
                 break;
             case 4781: // Renommage utilisateur

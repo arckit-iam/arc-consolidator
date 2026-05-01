@@ -108,4 +108,59 @@ public class ArcEvent {
 
     public Target getTarget() { return target; }
     public void setTarget(Target target) { this.target = target; }
+    // Ajout pour ASSIGNMENT: exposer explicitement identity et entitlement
+    private Identity identity;
+    private Entitlement entitlement;
+
+    public Identity getIdentity() { return identity; }
+    public void setIdentity(Identity identity) { this.identity = identity; }
+
+    public Entitlement getEntitlement() { return entitlement; }
+    public void setEntitlement(Entitlement entitlement) { this.entitlement = entitlement; }
+
+    /**
+     * Représente une identité (user/service/machine) pour les events d'assignation.
+     */
+    public static class Identity {
+        private String id;
+        private String displayName;
+        private String externalId;
+        private String type;
+        private String sourceSystem;
+        // Ajoute d'autres champs métier si besoin
+
+        public String getId() { return id; }
+        public void setId(String id) { this.id = id; }
+        public String getDisplayName() { return displayName; }
+        public void setDisplayName(String displayName) { this.displayName = displayName; }
+        public String getExternalId() { return externalId; }
+        public void setExternalId(String externalId) { this.externalId = externalId; }
+        public String getType() { return type; }
+        public void setType(String type) { this.type = type; }
+        public String getSourceSystem() { return sourceSystem; }
+        public void setSourceSystem(String sourceSystem) { this.sourceSystem = sourceSystem; }
+    }
+
+    /**
+     * Représente un entitlement (groupe/profil/rôle) pour les events d'assignation.
+     */
+    public static class Entitlement {
+        private String id;
+        private String name;
+        private String externalId;
+        private String type;
+        private String sourceSystem;
+        // Ajoute d'autres champs métier si besoin
+
+        public String getId() { return id; }
+        public void setId(String id) { this.id = id; }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public String getExternalId() { return externalId; }
+        public void setExternalId(String externalId) { this.externalId = externalId; }
+        public String getType() { return type; }
+        public void setType(String type) { this.type = type; }
+        public String getSourceSystem() { return sourceSystem; }
+        public void setSourceSystem(String sourceSystem) { this.sourceSystem = sourceSystem; }
+    }
 }

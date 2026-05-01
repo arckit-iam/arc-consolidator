@@ -296,11 +296,21 @@ class ArcEventMapperTest {
           "TimeCreated": "2026-04-26 12:01:00 +0200",
           "EventRecordID": 8000002,
           "Computer": "DC01.iap.local",
-          "StringInserts": ["wef-test-5252", "DL-Finance-All", "S-1-5-21-...-1200", "S-1-5-21-...-2000"]
+          "StringInserts": ["DL-Finance-All", "IAP", "S-1-5-21-...-1200", "S-1-5-21-...-2000", "wef-test-5252", "IAP", "0x12345"]
         }
         """;
         ArcEvent event = mapper.fromRaw(eventJson);
         assertThat(event.getEventType()).isEqualTo(ArcEventType.ASSIGNMENT_ADDED);
+        // Vérifie que l'entitlement (groupe) est bien mappé
+        assertThat(event.getEntitlement()).isNotNull();
+        assertThat(event.getEntitlement().getName()).isEqualTo("DL-Finance-All");
+        assertThat(event.getEntitlement().getExternalId()).isEqualTo("S-1-5-21-...-1200");
+        assertThat(event.getEntitlement().getType()).isEqualTo("security-group");
+        // Vérifie que l'identity (user) est bien mappée
+        assertThat(event.getIdentity()).isNotNull();
+        assertThat(event.getIdentity().getDisplayName()).isEqualTo("wef-test-5252");
+        assertThat(event.getIdentity().getExternalId()).isEqualTo("S-1-5-21-...-2000");
+        assertThat(event.getIdentity().getType()).isEqualTo("user");
     }
 
     // ── EventID 4781 – USER_RENAMED ────────────────────────────────────────
@@ -319,29 +329,7 @@ class ArcEventMapperTest {
         assertThat(event.getEventType()).isEqualTo(ArcEventType.USER_RENAMED);
     }
 
-    // ── EventID 4728 avec scope (exemple simplifié) ────────────────────────
-    @Test
-    void fromRaw_4728_withScope_parsesScopeField() throws IOException {
-        // Ici, le scope serait à parser dans un champ additionnel ou metadata (exemple fictif)
-        String eventJson = """
-        {
-          "EventID": 4728,
-          "TimeCreated": "2026-04-26 12:03:00 +0200",
-          "EventRecordID": 8000004,
-          "Computer": "DC01.iap.local",
-          "StringInserts": ["wef-test-5252", "DL-Finance-All", "S-1-5-21-...-1200", "S-1-5-21-...-2000"],
-          "scope": {
-            "dimensions": [
-              { "type": "region", "value": "EMEA" },
-              { "type": "entity", "value": ["FR-01", "FR-02"] }
-            ]
-          }
-        }
-        """;
-        ArcEvent event = mapper.fromRaw(eventJson);
-        assertThat(event.getEventType()).isEqualTo(ArcEventType.ASSIGNMENT_ADDED);
-        // Ici, on vérifierait le mapping du scope si implémenté dans ArcEvent
-    }
+    // (Suppression du doublon de test et de l’accolade superflue)
 
     // ── EventID 4731 – Vérification du parsing des attributs modifiés groupe ──
     @Test
