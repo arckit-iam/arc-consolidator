@@ -8,13 +8,12 @@ public class IdentityEventDTO {
     private OffsetDateTime timestamp;
     private String eventType;
     private String source;
-    private String sourceComputer;
+    private String system;
     private int sourceEventId;
     private String name;        // CN=... / DN
     private String displayName; // nom lisible (sAMAccountName)
     private String externalId;  // SID
     private String type;
-    private String sourceSystem;
     private List<ChangedAttribute> changedAttributes;
 
     public static class ChangedAttribute {
@@ -38,8 +37,8 @@ public class IdentityEventDTO {
     public void setEventType(String eventType) { this.eventType = eventType; }
     public String getSource() { return source; }
     public void setSource(String source) { this.source = source; }
-    public String getSourceComputer() { return sourceComputer; }
-    public void setSourceComputer(String sourceComputer) { this.sourceComputer = sourceComputer; }
+    public String getSystem() { return system; }
+    public void setSystem(String system) { this.system = system; }
     public int getSourceEventId() { return sourceEventId; }
     public void setSourceEventId(int sourceEventId) { this.sourceEventId = sourceEventId; }
     public String getName() { return name; }
@@ -50,8 +49,6 @@ public class IdentityEventDTO {
     public void setExternalId(String externalId) { this.externalId = externalId; }
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
-    public String getSourceSystem() { return sourceSystem; }
-    public void setSourceSystem(String sourceSystem) { this.sourceSystem = sourceSystem; }
     public List<ChangedAttribute> getChangedAttributes() { return changedAttributes; }
     public void setChangedAttributes(List<ChangedAttribute> changedAttributes) { this.changedAttributes = changedAttributes; }
 }

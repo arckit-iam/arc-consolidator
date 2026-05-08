@@ -8,7 +8,7 @@ public class AssignmentEventDTO {
     private OffsetDateTime timestamp;
     private String eventType;
     private String source;
-    private String sourceComputer;
+    private String system;
     private int sourceEventId;
     private Identity identity;
     private Entitlement entitlement;
@@ -20,7 +20,7 @@ public class AssignmentEventDTO {
         private String displayName; // nom lisible (sAMAccountName)
         private String externalId;  // SID
         private String type;
-        private String sourceSystem;
+        private String system;
         // getters/setters
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
@@ -30,15 +30,15 @@ public class AssignmentEventDTO {
         public void setExternalId(String externalId) { this.externalId = externalId; }
         public String getType() { return type; }
         public void setType(String type) { this.type = type; }
-        public String getSourceSystem() { return sourceSystem; }
-        public void setSourceSystem(String sourceSystem) { this.sourceSystem = sourceSystem; }
+        public String getSystem() { return system; }
+        public void setSystem(String system) { this.system = system; }
     }
     public static class Entitlement {
         private String name;        // CN=... / DN (ou sAMAccountName si DN absent)
         private String displayName; // nom lisible (sAMAccountName)
         private String externalId;  // SID
         private String type;
-        private String sourceSystem;
+        private String system;
         // getters/setters
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
@@ -48,8 +48,8 @@ public class AssignmentEventDTO {
         public void setExternalId(String externalId) { this.externalId = externalId; }
         public String getType() { return type; }
         public void setType(String type) { this.type = type; }
-        public String getSourceSystem() { return sourceSystem; }
-        public void setSourceSystem(String sourceSystem) { this.sourceSystem = sourceSystem; }
+        public String getSystem() { return system; }
+        public void setSystem(String system) { this.system = system; }
     }
     public static class Scope {
         /** Dimensions du scope (ex: géographique, organisationnel, applicatif...) */
@@ -90,8 +90,8 @@ public class AssignmentEventDTO {
     public void setEventType(String eventType) { this.eventType = eventType; }
     public String getSource() { return source; }
     public void setSource(String source) { this.source = source; }
-    public String getSourceComputer() { return sourceComputer; }
-    public void setSourceComputer(String sourceComputer) { this.sourceComputer = sourceComputer; }
+    public String getSystem() { return system; }
+    public void setSystem(String system) { this.system = system; }
     public int getSourceEventId() { return sourceEventId; }
     public void setSourceEventId(int sourceEventId) { this.sourceEventId = sourceEventId; }
     public Identity getIdentity() { return identity; }

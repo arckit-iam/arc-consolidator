@@ -9,7 +9,7 @@
     "externalId": "S-1-5-21-...",
     "displayName": "wef-test-0554",
     "type": "user",
-    "sourceSystem": "ad://corp.example.com",
+    "system": "ad://corp.example.com",
     "metadata": { }
   }
 }
@@ -38,7 +38,7 @@ Pour une modification :
     "externalId": "S-1-5-21-...-512",
     "name": "Domain Admins",
     "type": "security-group",
-    "sourceSystem": "ad://corp.example.com",
+    "system": "ad://corp.example.com",
     "metadata": { }
   }
 }
@@ -68,7 +68,7 @@ Pour une modification :
     "entitlementId": "e7d3a021-...",
     "entitlementName": "Domain Admins",
     "grantedAt": "2026-04-02T14:32:11.123Z",
-    "sourceSystem": "ad://corp.example.com"
+    "system": "ad://corp.example.com"
   }
 }
 ```
@@ -149,7 +149,7 @@ L'architecture initiale était centrée sur Active Directory. Mais les mêmes pr
 |---|---|---|
 | `id` | UUID | Identifiant stable généré par la plateforme |
 | `externalId` | string | Identifiant dans le système source (SID, UID, UUID appli…) |
-| `sourceSystem` | string | Système d'origine (`activedirectory`, `app-a`, `ldap`, `entra-id`) |
+| `system` | string | Système d'origine (`activedirectory`, `app-a`, `ldap`, `entra-id`) |
 | `type` | enum | `user` / `service` / `machine` / `robot` / `guest` |
 | `displayName` | string | Nom lisible |
 | `metadata` | map | Champs additionnels libres (department, email…) |
@@ -173,7 +173,7 @@ L'architecture initiale était centrée sur Active Directory. Mais les mêmes pr
 |---|---|---|
 | `id` | UUID | Identifiant stable généré par la plateforme |
 | `externalId` | string | Identifiant dans le système source (SID groupe, ID profil appli…) |
-| `sourceSystem` | string | Système d'origine |
+| `system` | string | Système d'origine |
 | `name` | string | Nom lisible (`Domain Admins`, `PROFIL_GESTIONNAIRE`, `admin-role`) |
 | `type` | enum | `security-group` / `distribution-group` / `app-profile` / `role` / `permission-set` |
 | `sensitivityLevel` | enum | `LOW` / `MEDIUM` / `HIGH` / `CRITICAL` |
@@ -202,7 +202,7 @@ L'architecture initiale était centrée sur Active Directory. Mais les mêmes pr
 | `id` | UUID | Identifiant stable de l'affectation |
 | `identityId` | UUID | Ref vers l'Identity (id plateforme) |
 | `entitlementId` | UUID | Ref vers l'Entitlement (id plateforme) |
-| `sourceSystem` | string | Système source de cette affectation |
+| `system` | string | Système source de cette affectation |
 | `grantedBy` | Identity ref | Qui a fait l'affectation |
 | `grantedAt` | datetime | Horodatage de l'affectation |
 | `expiresAt` | datetime? | Date d'expiration (si applicable) |
@@ -383,13 +383,13 @@ Chaque système source doit s'enregistrer dans un **Source Registry** avant de p
       "grantedBy": {
         "externalId": "S-1-5-21-...-500",
         "displayName": "admin.service",
-        "sourceSystem": "ad://corp.example.com"
+        "system": "ad://corp.example.com"
       }
     },
     "identity": {
       "id": "f47ac10b-...",
       "externalId": "S-1-5-21-...-1105",
-      "sourceSystem": "ad://corp.example.com",
+      "system": "ad://corp.example.com",
       "type": "user",
       "displayName": "John Doe",
       "metadata": {
@@ -401,7 +401,7 @@ Chaque système source doit s'enregistrer dans un **Source Registry** avant de p
     "entitlement": {
       "id": "e7d3a021-...",
       "externalId": "S-1-5-21-...-512",
-      "sourceSystem": "ad://corp.example.com",
+      "system": "ad://corp.example.com",
       "type": "security-group",
       "name": "Domain Admins",
       "sensitivityLevel": "CRITICAL",
@@ -437,7 +437,7 @@ Chaque système source doit s'enregistrer dans un **Source Registry** avant de p
       "grantedBy": {
         "externalId": "admin-rh-001",
         "displayName": "Administrateur RH",
-        "sourceSystem": "app://sirh.example.com"
+        "system": "app://sirh.example.com"
       },
       "scope": {
         "dimensions": [
@@ -448,7 +448,7 @@ Chaque système source doit s'enregistrer dans un **Source Registry** avant de p
     "identity": {
       "id": "a1b2c3d4-...",
       "externalId": "emp-00789",
-      "sourceSystem": "app://sirh.example.com",
+      "system": "app://sirh.example.com",
       "type": "user",
       "displayName": "Marie Dupont",
       "metadata": { "email": "m.dupont@corp.example.com" }
@@ -456,7 +456,7 @@ Chaque système source doit s'enregistrer dans un **Source Registry** avant de p
     "entitlement": {
       "id": "b2c3d4e5-...",
       "externalId": "profile-rh-manager",
-      "sourceSystem": "app://sirh.example.com",
+      "system": "app://sirh.example.com",
       "type": "app-profile",
       "name": "PROFIL_RH_MANAGER",
       "sensitivityLevel": "HIGH"
@@ -490,13 +490,13 @@ Chaque système source doit s'enregistrer dans un **Source Registry** avant de p
       "grantedBy": {
         "externalId": "user-admin-001",
         "displayName": "Administrateur App A",
-        "sourceSystem": "app://app-a.example.com"
+        "system": "app://app-a.example.com"
       }
     },
     "identity": {
       "id": "c3d4e5f6-...",
       "externalId": "user-00234",
-      "sourceSystem": "app://app-a.example.com",
+      "system": "app://app-a.example.com",
       "type": "user",
       "displayName": "Jane Smith",
       "metadata": {
@@ -508,7 +508,7 @@ Chaque système source doit s'enregistrer dans un **Source Registry** avant de p
     "entitlement": {
       "id": "d4e5f6a7-...",
       "externalId": "profile-003",
-      "sourceSystem": "app://app-a.example.com",
+      "system": "app://app-a.example.com",
       "type": "app-profile",
       "name": "PROFIL_EXPORT_PAIE",
       "sensitivityLevel": "CRITICAL",

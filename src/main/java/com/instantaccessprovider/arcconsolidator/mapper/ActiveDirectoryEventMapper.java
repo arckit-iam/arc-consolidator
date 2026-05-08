@@ -46,13 +46,12 @@ public class ActiveDirectoryEventMapper {
         dto.setTimestamp(OffsetDateTime.parse(timeCreated, TIME_CREATED_FORMATTER));
         dto.setEventType(resolveEventType(eventId).name());
         dto.setSource("activedirectory");
-        dto.setSourceComputer(computer);
+        dto.setSystem(computer);
         dto.setSourceEventId(eventId);
         dto.setName(safeGet(inserts, 0));        // sAMAccountName (pas de DN disponible pour les events groupe)
         dto.setDisplayName(safeGet(inserts, 0));  // idem
         dto.setExternalId(safeGet(inserts, 2));   // SID
         dto.setType("security-group");
-        dto.setSourceSystem("activedirectory");
         dto.setChangedAttributes(parseChangedAttributesDTOEntitlement(node.path("Message").asText("")));
         return dto;
     }
@@ -71,7 +70,7 @@ public class ActiveDirectoryEventMapper {
         dto.setTimestamp(OffsetDateTime.parse(timeCreated, TIME_CREATED_FORMATTER));
         dto.setEventType(resolveEventType(eventId).name());
         dto.setSource("activedirectory");
-        dto.setSourceComputer(computer);
+        dto.setSystem(computer);
         dto.setSourceEventId(eventId);
         // Layout 4720/4722/4725/4726 : [0]=sAMAccountName, [1]=domain, [2]=SID, ...
         // Layout 4738/4781           : [0]=oldSAMChange("-"), [1]=sAMAccountName, [2]=domain, [3]=SID, ...
@@ -82,7 +81,7 @@ public class ActiveDirectoryEventMapper {
         dto.setDisplayName(samAccountName);
         dto.setExternalId(sid);
         dto.setType("user");
-        dto.setSourceSystem("activedirectory");
+        dto.setSystem(computer);
         dto.setChangedAttributes(parseChangedAttributesDTOIdentity(node.path("Message").asText("")));
         return dto;
     }
@@ -101,7 +100,7 @@ public class ActiveDirectoryEventMapper {
         dto.setTimestamp(OffsetDateTime.parse(timeCreated, TIME_CREATED_FORMATTER));
         dto.setEventType(resolveEventType(eventId).name());
         dto.setSource("activedirectory");
-        dto.setSourceComputer(computer);
+        dto.setSystem(computer);
         dto.setSourceEventId(eventId);
 
         // Identity : [0]=memberDN, [1]=memberDomain, [2]=groupSAMAccountName, [3]=groupDomain, [4]=memberSID, [5]=groupSID
@@ -111,7 +110,7 @@ public class ActiveDirectoryEventMapper {
         identity.setDisplayName(extractCN(memberDn));           // nom lisible extrait du DN
         identity.setExternalId(safeGet(inserts, 4));            // SID du membre
         identity.setType("user");
-        identity.setSourceSystem("activedirectory");
+        identity.setSystem(computer);
         dto.setIdentity(identity);
 
         // Entitlement
@@ -121,7 +120,7 @@ public class ActiveDirectoryEventMapper {
         entitlement.setDisplayName(groupSamAccountName);        // idem
         entitlement.setExternalId(safeGet(inserts, 5));         // SID du groupe
         entitlement.setType("security-group");
-        entitlement.setSourceSystem("activedirectory");
+        entitlement.setSystem(computer);
         dto.setEntitlement(entitlement);
 
         dto.setChangedAttributes(parseChangedAttributesDTOAssignment(node.path("Message").asText("")));
