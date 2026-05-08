@@ -16,7 +16,7 @@ spec:
   values:
     image:
       repository: ghcr.io/arckit-iam/arc-consolidator
-      tag: "1.1.0-dev"
+      tag: "1.1.1-dev"
       pullPolicy: IfNotPresent
     imagePullSecrets:
       - name: ghcr
