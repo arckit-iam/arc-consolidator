@@ -30,9 +30,9 @@ public class ArcEventPublisher implements ArcEventOutputPort {
     public ArcEventPublisher(KafkaTemplate<String, Object> kafkaTemplate, Environment env) {
         this.kafkaTemplate = kafkaTemplate;
         this.defaultTopic = env.getProperty("arc.topic", "arc");
-        this.identityTopic = env.getProperty("arc.topics.identity", "arc.identity");
-        this.entitlementTopic = env.getProperty("arc.topics.entitlement", "arc.entitlement");
-        this.assignmentTopic = env.getProperty("arc.topics.assignment", "arc.assignment");
+        this.identityTopic = env.getProperty("arc.topics.identity", "arc.sync.identity");
+        this.entitlementTopic = env.getProperty("arc.topics.entitlement", "arc.sync.entitlement");
+        this.assignmentTopic = env.getProperty("arc.topics.assignment", "arc.sync.assignment");
     }
 
     @Override
