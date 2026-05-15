@@ -255,21 +255,21 @@ Plusieurs dimensions peuvent être combinées dans un même scope :
 Quel que soit le système source, les événements se réduisent à **neuf types** :
 
 ```
-IDENTITY EVENTS
-  iam.identity.created      ← 4720 (AD) / création compte applicatif
-  iam.identity.updated      ← 4738 (AD) / modification profil utilisateur
-  iam.identity.deleted      ← 4726 (AD) / suppression compte
-  iam.identity.enabled      ← 4722 (AD) / activation
-  iam.identity.disabled     ← 4725 (AD) / désactivation
+IDENTITY EVENTS  (topic : arc.sync.identity)
+  arc.sync.identity.created      ← 4720 (AD) / création compte applicatif
+  arc.sync.identity.updated      ← 4738 (AD) / modification profil utilisateur
+  arc.sync.identity.deleted      ← 4726 (AD) / suppression compte
+  arc.sync.identity.enabled      ← 4722 (AD) / activation
+  arc.sync.identity.disabled     ← 4725 (AD) / désactivation
 
-ENTITLEMENT EVENTS
-  iam.entitlement.created   ← 4727/4731/4754 (AD) / création profil appli
-  iam.entitlement.updated   ← modification groupe/profil
-  iam.entitlement.deleted   ← 4730/4734/4758 (AD) / suppression profil
+ENTITLEMENT EVENTS  (topic : arc.sync.entitlement)
+  arc.sync.entitlement.created   ← 4727/4731/4754 (AD) / création profil appli
+  arc.sync.entitlement.updated   ← modification groupe/profil
+  arc.sync.entitlement.deleted   ← 4730/4734/4758 (AD) / suppression profil
 
-ASSIGNMENT EVENTS
-  iam.assignment.added      ← 4728/4732/4756 (AD) / User → Profil applicatif
-  iam.assignment.removed    ← 4729/4733/4757 (AD) / retrait
+ASSIGNMENT EVENTS  (topic : arc.sync.assignment)
+  arc.sync.assignment.added      ← 4728/4732/4756 (AD) / User → Profil applicatif
+  arc.sync.assignment.removed    ← 4729/4733/4757 (AD) / retrait
 ```
 
 ---
@@ -293,11 +293,11 @@ Le principe fondamental : la collecte est assurée par **Fluent Bit** ou **CAESA
       └──────────┬──────────┘
            │
   ┌──────────────┼──────────────┬──────────────┬────────────────┐
-  ▼              ▼              ▼              ▼                ▼
-[iam.identity] [iam.entitlement] [iam.assignment] [iam.alert] [iam.consolidated]
-                      [iam.audit]
+  ▼                      ▼                        ▼
+[arc.sync.identity] [arc.sync.entitlement] [arc.sync.assignment]
 
-iam.consolidated ──► InstantAccessPublisher (Java) ──► PostgreSQL (etat T0)
+arc.sync.* ──► arc-consolidator (Java) ──► PostgreSQL (état T0)
+arc.sync.* ──► arc-publisher   (Java) ──► arc.provisioning.*
 ```
 
 **Responsabilites de Fluent Bit :**
@@ -308,7 +308,7 @@ iam.consolidated ──► InstantAccessPublisher (Java) ──► PostgreSQL (e
 **Responsabilites du Stream Processor :**
 - Mapping metier vers le modele IAM abstrait
 - Enrichissement (LDAP, CMDB, UO AD)
-- Publication des topics normalises et du topic de projection `iam.consolidated`
+- Publication des topics normalisés `arc.sync.identity`, `arc.sync.entitlement`, `arc.sync.assignment`
 
 **Pourquoi un topic raw par source ?**
 - Rejouer une seule source sans toucher aux autres
@@ -364,14 +364,14 @@ Chaque système source doit s'enregistrer dans un **Source Registry** avant de p
 
 ## 6. Schéma CloudEvents générique
 
-### 6.1 Événement `iam.assignment.added` (universel)
+### 6.1 Événement `arc.sync.assignment.added` (universel)
 
 ```json
 {
   "specversion": "1.0",
   "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
   "source": "ad://corp.example.com",
-  "type": "com.example.iam.assignment.added",
+  "type": "arc.sync.assignment.added",
   "time": "2026-04-02T14:32:11.123Z",
   "datacontenttype": "application/json",
   "iamsourcetype": "activedirectory",
@@ -426,7 +426,7 @@ Chaque système source doit s'enregistrer dans un **Source Registry** avant de p
   "specversion": "1.0",
   "id": "3e4f5a06-cd23-...",
   "source": "app://sirh.example.com",
-  "type": "com.example.iam.assignment.added",
+  "type": "arc.sync.assignment.added",
   "time": "2026-04-03T09:15:00.000Z",
   "iamsourcetype": "business-application",
 
@@ -479,7 +479,7 @@ Chaque système source doit s'enregistrer dans un **Source Registry** avant de p
   "specversion": "1.0",
   "id": "9f1e3a02-ab12-...",
   "source": "app://app-a.example.com",
-  "type": "com.example.iam.assignment.added",
+  "type": "arc.sync.assignment.added",
   "time": "2026-04-02T15:01:00.000Z",
   "iamsourcetype": "business-application",
 
@@ -526,7 +526,7 @@ Chaque système source doit s'enregistrer dans un **Source Registry** avant de p
 }
 ```
 
-**Les trois événements ont le même `type`, le même schéma, les mêmes règles de détection SOC.**  
+**Les trois événements ont le même `type` (`arc.sync.assignment.added`), le même schéma, les mêmes règles de détection SOC.**  
 Seul `source` et `data.entitlement.type` différencient l'origine.
 
 ---
@@ -541,10 +541,10 @@ Seul `source` et `data.entitlement.type` différencient l'origine.
 | Security Group | Entitlement | `security-group` |
 | Distribution Group | Entitlement | `distribution-group` |
 | memberOf | Assignment | — |
-| Event 4720 | `iam.identity.created` | — |
-| Event 4727/4731/4754 | `iam.entitlement.created` | — |
-| Event 4728/4732/4756 | `iam.assignment.added` | — |
-| Event 4729/4733/4757 | `iam.assignment.removed` | — |
+| Event 4720 | `arc.sync.identity.created` | — |
+| Event 4727/4731/4754 | `arc.sync.entitlement.created` | — |
+| Event 4728/4732/4756 | `arc.sync.assignment.added` | — |
+| Event 4729/4733/4757 | `arc.sync.assignment.removed` | — |
 
 ### Application générique (REST / Webhook / DB CDC)
 
@@ -553,9 +553,9 @@ Seul `source` et `data.entitlement.type` différencient l'origine.
 | Utilisateur applicatif | Identity | `user` |
 | Profil / Rôle applicatif | Entitlement | `app-profile` ou `role` |
 | Affectation User → Profil | Assignment | — |
-| Création profil | `iam.entitlement.created` | — |
-| Affectation profil | `iam.assignment.added` | — |
-| Retrait profil | `iam.assignment.removed` | — |
+| Création profil | `arc.sync.entitlement.created` | — |
+| Affectation profil | `arc.sync.assignment.added` | — |
+| Retrait profil | `arc.sync.assignment.removed` | — |
 
 ### OpenLDAP
 
@@ -564,8 +564,8 @@ Seul `source` et `data.entitlement.type` différencient l'origine.
 | `inetOrgPerson` | Identity | `user` |
 | `groupOfNames` | Entitlement | `security-group` |
 | `member` attribute | Assignment | — |
-| DirSync add entry | `iam.identity.created` | — |
-| DirSync modify member | `iam.assignment.added/removed` | — |
+| DirSync add entry | `arc.sync.identity.created` | — |
+| DirSync modify member | `arc.sync.assignment.added/removed` | — |
 
 ---
 
@@ -617,7 +617,7 @@ Chaque événement AD est mappé sur un événement métier générique du modè
 ### Exemple d’événement Assignment avec scope
 ```json
 {
-  "eventType": "iam.assignment.added",
+  "eventType": "arc.sync.assignment.added",
   "identityId": "...",
   "entitlementId": "...",
   "scope": {
@@ -632,7 +632,7 @@ Chaque événement AD est mappé sur un événement métier générique du modè
 ### Exemple d’événement Assignment sans scope
 ```json
 {
-  "eventType": "iam.assignment.added",
+  "eventType": "arc.sync.assignment.added",
   "identityId": "...",
   "entitlementId": "..."
 }
