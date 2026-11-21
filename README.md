@@ -70,7 +70,7 @@ docker build -t arc-consolidator .
 - [arc-docs](https://github.com/arckit-iam/arc-docs) : architecture de la plateforme.
   - [Modèle abstrait IAM](https://github.com/arckit-iam/arc-docs/blob/main/docs/00-modele-abstrait.md) : entités, catalogue d'événements `arc.sync.*`, formats CloudEvents et correspondances par source.
   - [Architecture globale](https://github.com/arckit-iam/arc-docs/blob/main/docs/02-architecture-globale.md).
-- Déploiement (Helm, FluxCD) : dépôt GitOps privé. L'intégration est proposée par Dédale Solutions en **service payant** : contactez-nous via le profil GitHub de l'organisation [arckit-iam](https://github.com/arckit-iam).
+- Déploiement (Helm, FluxCD) : dépôt GitOps privé. L'intégration est proposée par Dédale Solutions en **service payant** : contactez-nous à [etiennsalle@gmail.com](mailto:etiennsalle@gmail.com).
 
 ## Contribuer et sécurité
 
