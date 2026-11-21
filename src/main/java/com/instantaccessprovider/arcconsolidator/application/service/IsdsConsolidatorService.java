@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Dédale Solutions
+// SPDX-License-Identifier: EUPL-1.2
 
 package com.instantaccessprovider.arcconsolidator.application.service;
 

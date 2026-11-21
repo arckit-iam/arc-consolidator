@@ -37,5 +37,24 @@ Le code est organisé pour séparer la logique métier (domaine) des détails d�
 
 ---
 
+## Documentation
+
+La documentation d'architecture de la plateforme est dans le dépôt [arc-docs](https://github.com/EtiennSalle/arc-docs) :
+
+- [Modèle abstrait IAM](https://github.com/EtiennSalle/arc-docs/blob/main/docs/00-modele-abstrait.md) : entités Identity / Entitlement / Assignment, catalogue d'événements rc.sync.*, formats CloudEvents et correspondances par source.
+- [Architecture globale](https://github.com/EtiennSalle/arc-docs/blob/main/docs/02-architecture-globale.md).
+
+Le déploiement (Helm, Flux, CI/CD) est documenté dans [arc-kubeorchestrator](https://github.com/arckit-iam/arc-kubeorchestrator/tree/main/docs).
+
+## Licence
+
+Copyright © 2026 Dédale Solutions
+
+Licensed under the EUPL
+
+Ce projet est distribué sous la licence [EUPL-1.2](LICENSE) (European Union Public Licence v. 1.2).
+
+---
+
 À compléter selon les besoins métier (enrichissement, gestion d’erreurs, tests, etc.)
 

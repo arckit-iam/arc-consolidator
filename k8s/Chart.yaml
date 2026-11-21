@@ -1,6 +1,0 @@
----
-apiVersion: v2
-name: arc-consolidator
-version: 0.1.0
-description: Arc Consolidator Helm chart
-appVersion: "1.0.0"
