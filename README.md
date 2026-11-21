@@ -37,5 +37,15 @@ Le code est organisé pour séparer la logique métier (domaine) des détails d�
 
 ---
 
+## Licence
+
+Copyright © 2026 Dédale Solutions
+
+Licensed under the EUPL
+
+Ce projet est distribué sous la licence [EUPL-1.2](LICENSE) (European Union Public Licence v. 1.2).
+
+---
+
 À compléter selon les besoins métier (enrichissement, gestion d’erreurs, tests, etc.)
 
