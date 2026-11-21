@@ -44,13 +44,13 @@ jobs:
     runs-on: [self-hosted, arc-consolidator]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Write kubeconfig to file
         run: echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
 
       - name: Checkout arc-kubeorchestrator
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: arckit-iam/arc-kubeorchestrator
           token: ${{ secrets.GITOPS_TOKEN }}
