@@ -39,10 +39,10 @@ Le code est organisé pour séparer la logique métier (domaine) des détails d�
 
 ## Documentation
 
-La documentation d'architecture de la plateforme est dans le dépôt [arc-docs](https://github.com/EtiennSalle/arc-docs) :
+La documentation d'architecture de la plateforme est dans le dépôt [arc-docs](https://github.com/arckit-iam/arc-docs) :
 
-- [Modèle abstrait IAM](https://github.com/EtiennSalle/arc-docs/blob/main/docs/00-modele-abstrait.md) : entités Identity / Entitlement / Assignment, catalogue d'événements rc.sync.*, formats CloudEvents et correspondances par source.
-- [Architecture globale](https://github.com/EtiennSalle/arc-docs/blob/main/docs/02-architecture-globale.md).
+- [Modèle abstrait IAM](https://github.com/arckit-iam/arc-docs/blob/main/docs/00-modele-abstrait.md) : entités Identity / Entitlement / Assignment, catalogue d'événements rc.sync.*, formats CloudEvents et correspondances par source.
+- [Architecture globale](https://github.com/arckit-iam/arc-docs/blob/main/docs/02-architecture-globale.md).
 
 Le déploiement (Helm, Flux, CI/CD) est documenté dans [arc-kubeorchestrator](https://github.com/arckit-iam/arc-kubeorchestrator/tree/main/docs).
 
