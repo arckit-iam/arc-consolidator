@@ -7,13 +7,14 @@ Service de normalisation de la plateforme [Instant Access Provider](https://gith
 ```text
 iam.raw.activedirectory ──► RawAdEventConsumer   ──► ArcConsolidatorService   ──┐
 iam.raw.isds            ──► RawIsdsEventConsumer ──► IsdsConsolidatorService ──┤
+iam.raw.ldap            ──► RawLdapEventConsumer ──► LdapConsolidatorService ──┤
                                                                                   ▼
                                                                          ArcEventPublisher
                                                                                   │
                                               arc.sync.identity / arc.sync.entitlement / arc.sync.assignment
 ```
 
-- Un consumer Kafka par source, un service applicatif par source, un mapper dédié par source (`ActiveDirectoryEventMapper`, `IsdsEventMapper`).
+- Un consumer Kafka par source, un service applicatif par source, un mapper dédié par source (`ActiveDirectoryEventMapper`, `IsdsEventMapper`, `LdapEventMapper`).
 - Chaque événement brut produit un ou plusieurs DTO (`IdentityEventDTO`, `EntitlementEventDTO`, `AssignmentEventDTO`), publiés sur le topic correspondant.
 - Les types d'événements sont `CREATED`, `MODIFIED`, `DELETED`, `ENABLED`, `DISABLED`, `RENAMED`, `ADDED`, `REMOVED` ou `UNKNOWN`. Le type d'objet est porté par le topic.
 
@@ -29,6 +30,15 @@ iam.raw.isds            ──► RawIsdsEventConsumer ──► IsdsConsolidato
 | `ARC_TOPIC_ASSIGNMENT` | `arc.sync.assignment` | Topic des affectations |
 
 Le consumer ISDS écoute `iam.raw.isds`, modifiable avec la propriété `iam.topics.isds`.
+
+Le consumer LDAP écoute `iam.raw.ldap` (publié par [`arc-agent-openldap`](https://github.com/arckit-iam/arc-agent-openldap)) :
+
+| Variable | Défaut | Rôle |
+|---|---|---|
+| `IAM_TOPICS_LDAP` | `iam.raw.ldap` | Topic brut LDAP |
+| `IAM_LDAP_IGNORED_MEMBERS` | vide | DN de membres techniques à ignorer, séparés par `;` (par exemple le compte de service) |
+
+Une entrée `inetOrgPerson` produit une identité ; un groupe `groupOfNames` produit un droit, et chaque `member` ajouté ou retiré produit une affectation `ADDED` / `REMOVED`. Les événements déjà traités (mêmes `id`) sont ignorés, car la collecte peut rejouer le dernier changement au redémarrage.
 
 Un exemple d'événement Active Directory brut est fourni dans [exemple-ad.json](exemple-ad.json).
 
