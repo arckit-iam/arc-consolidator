@@ -17,6 +17,8 @@ public class IdentityEventDTO {
     private String displayName; // nom lisible (sAMAccountName)
     private String externalId;  // SID
     private String type;
+    /** Origine du changement quand la source la fournit (ex : arc-agent, external). */
+    private String origin;
     private List<ChangedAttribute> changedAttributes;
 
     public static class ChangedAttribute {
@@ -52,6 +54,8 @@ public class IdentityEventDTO {
     public void setExternalId(String externalId) { this.externalId = externalId; }
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
+    public String getOrigin() { return origin; }
+    public void setOrigin(String origin) { this.origin = origin; }
     public List<ChangedAttribute> getChangedAttributes() { return changedAttributes; }
     public void setChangedAttributes(List<ChangedAttribute> changedAttributes) { this.changedAttributes = changedAttributes; }
 }

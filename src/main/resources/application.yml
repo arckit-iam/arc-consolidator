@@ -22,3 +22,7 @@ arc:
 iam:
   topics:
     activedirectory: ${IAM_TOPICS_ACTIVEDIRECTORY:iam.raw.activedirectory}
+    ldap: ${IAM_TOPICS_LDAP:iam.raw.ldap}
+  ldap:
+    # DN des membres techniques de groupes a ignorer, separes par des points-virgules
+    ignored-members: ${IAM_LDAP_IGNORED_MEMBERS:}

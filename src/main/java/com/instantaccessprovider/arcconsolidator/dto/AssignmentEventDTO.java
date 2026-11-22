@@ -16,6 +16,8 @@ public class AssignmentEventDTO {
     private Identity identity;
     private Entitlement entitlement;
     private Scope scope;
+    /** Origine du changement quand la source la fournit (ex : arc-agent, external). */
+    private String origin;
     private List<ChangedAttribute> changedAttributes;
 
     public static class Identity {
@@ -103,6 +105,8 @@ public class AssignmentEventDTO {
     public void setEntitlement(Entitlement entitlement) { this.entitlement = entitlement; }
     public Scope getScope() { return scope; }
     public void setScope(Scope scope) { this.scope = scope; }
+    public String getOrigin() { return origin; }
+    public void setOrigin(String origin) { this.origin = origin; }
     public List<ChangedAttribute> getChangedAttributes() { return changedAttributes; }
     public void setChangedAttributes(List<ChangedAttribute> changedAttributes) { this.changedAttributes = changedAttributes; }
 }
